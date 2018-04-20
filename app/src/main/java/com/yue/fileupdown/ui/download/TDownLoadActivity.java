@@ -15,9 +15,15 @@ import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.databinding.ActivityTdownLoadBinding;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * time：2018/4/20 15:24
@@ -73,21 +79,75 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
     Runnable downRun = new Runnable() {
         @Override
         public void run() {
-            String fileName = Constanct.downLoadUrl.substring(Constanct.downLoadUrl.lastIndexOf("/"));
-            File directory = new File(Constanct.downloadPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
+            File file = null;
+            InputStream is = null;
+            FileOutputStream fileOutputStream;//写入到文件
+            try {
+                long downloadedLength = 0;      // 记录已下载的文件长度
+                String fileName = Constanct.downLoadUrl.substring(Constanct.downLoadUrl.lastIndexOf("/"));
+                File directory = new File(Constanct.downloadPath);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
+                file = new File(Constanct.downloadPath + fileName);
+                if (!file.exists()) {
+                    //删除重新下载
+                    file.delete();
+                }
+
+                //文件总长度
+                final long contentLength = getContentLength(Constanct.downLoadUrl);
+
+                /*url请求拿到下载数据*/
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        // 断点下载，指定从哪个字节开始下载
+//                        .addHeader("RANGE", "bytes=" + downloadedLength + "-")
+                        .url(Constanct.downLoadUrl)
+                        .build();
+                Response response = client.newCall(request).execute();
+                if (response != null) {
+                    /*拿到响应体数据流*/
+                    is = response.body().byteStream();
+                    byte[] b = new byte[1024];
+                    int total = 0;
+                    int len;
+                    while((len = is.read())!=-1){
+                        
+                    }
+
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+
             }
-
-            File file = new File(Constanct.downloadPath + fileName);
-            if (!file.exists()) {
-                //删除重新下载
-                file.delete();
-            }
-
-
         }
     };
+
+
+    /**
+     * 得到文件的大小 根据url
+     *
+     * @param downloadUrl
+     * @return
+     * @throws IOException
+     */
+    private long getContentLength(String downloadUrl) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(downloadUrl)
+                .build();
+        Response response = client.newCall(request).execute();
+        if (response != null && response.isSuccessful()) {
+            long contentLength = response.body().contentLength();
+            response.close();
+            return contentLength;
+        }
+        return 0;
+    }
 
     private void requestPermissions() {
         RxPermissions rxPermissions = new RxPermissions(this);
