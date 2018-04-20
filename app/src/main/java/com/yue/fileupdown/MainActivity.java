@@ -5,10 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.View;
+import android.widget.Toast;
 
 import com.yue.fileupdown.adapter.MainAdapter;
 import com.yue.fileupdown.bean.MainItem;
 import com.yue.fileupdown.databinding.ActivityMainBinding;
+import com.yue.fileupdown.listeners.OnRcyItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mBinding.rcyMain.setLayoutManager(new LinearLayoutManager(this));
         mBinding.rcyMain.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mBinding.rcyMain.setAdapter(mAdapter);
+        mAdapter.setOnRcyItemClickListener(onRcyItemClickListener);
         initData();
     }
 
@@ -46,4 +50,11 @@ public class MainActivity extends AppCompatActivity {
         mList.add(new MainItem("测试1", "测试1", null));
         mAdapter.notifyDataSetChanged();
     }
+
+    OnRcyItemClickListener onRcyItemClickListener = new OnRcyItemClickListener() {
+        @Override
+        public void onItemClick(View v, int position) {
+            Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+        }
+    };
 }
