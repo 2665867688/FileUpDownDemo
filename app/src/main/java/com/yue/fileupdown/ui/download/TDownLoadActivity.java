@@ -28,6 +28,8 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
 
     private ActivityTdownLoadBinding mBinding;
 
+    private Thread mThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,7 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
         requestPermissions();
         mBinding.btnTdlStart.setOnClickListener(this);
         mBinding.btnTdlCancle.setOnClickListener(this);
+        mThread = new Thread(downRun);
     }
 
 
@@ -54,14 +57,23 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
      * 开始下载
      */
     private void startDl() {
+        mThread.start();
     }
 
     /**
      * 取消下载 删除文件
      */
     private void cancleDl() {
-
+        if (!mThread.isInterrupted())
+            mThread.interrupt();
     }
+
+    Runnable downRun = new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    };
 
     private void requestPermissions() {
         RxPermissions rxPermissions = new RxPermissions(this);
