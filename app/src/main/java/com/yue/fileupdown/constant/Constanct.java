@@ -9,6 +9,9 @@ package com.yue.fileupdown.constant;
 
 public class Constanct {
 
+    /*下载源----url*/
+    public final static String downLoadUrl = "https://raw.githubusercontent.com/guolindev/eclipse/master/eclipse-inst-win64.exe";
+
     /*下载位置*/
     public final static String downloadPath = "";
 }

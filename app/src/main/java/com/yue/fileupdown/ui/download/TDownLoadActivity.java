@@ -32,10 +32,10 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_tdl_start:
-
+                startDl();
                 break;
             case R.id.btn_tdl_cancle:
-
+                cancleDl();
                 break;
         }
     }
