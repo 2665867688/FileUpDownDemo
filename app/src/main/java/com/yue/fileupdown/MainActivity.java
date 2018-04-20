@@ -1,5 +1,6 @@
 package com.yue.fileupdown;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.yue.fileupdown.adapter.MainAdapter;
 import com.yue.fileupdown.bean.MainItem;
 import com.yue.fileupdown.databinding.ActivityMainBinding;
 import com.yue.fileupdown.listeners.OnRcyItemClickListener;
+import com.yue.fileupdown.ui.download.TDownLoadActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,16 +47,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        mList.add(new MainItem("测试1", "测试1", null));
-        mList.add(new MainItem("测试1", "测试1", null));
-        mList.add(new MainItem("测试1", "测试1", null));
+        mList.add(new MainItem("测试简单下载", "测试简单下载", TDownLoadActivity.class));
         mAdapter.notifyDataSetChanged();
     }
 
     OnRcyItemClickListener onRcyItemClickListener = new OnRcyItemClickListener() {
         @Override
         public void onItemClick(View v, int position) {
-            Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+            MainItem item = mList.get(position);
+            startActivity(new Intent(MainActivity.this, item.getaClass()));
         }
     };
 }
