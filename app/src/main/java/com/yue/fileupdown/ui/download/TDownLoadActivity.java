@@ -46,7 +46,6 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
      * 开始下载
      */
     private void startDl() {
-        Toast.makeText(this, "下载位置" + Constanct.downloadPath, Toast.LENGTH_SHORT).show();
     }
 
     /**
