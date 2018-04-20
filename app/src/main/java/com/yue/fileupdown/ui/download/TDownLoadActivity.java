@@ -4,8 +4,10 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.yue.fileupdown.R;
+import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.databinding.ActivityTdownLoadBinding;
 
 /**
@@ -44,7 +46,7 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
      * 开始下载
      */
     private void startDl() {
-
+        Toast.makeText(this, "下载位置" + Constanct.downloadPath, Toast.LENGTH_SHORT).show();
     }
 
     /**
