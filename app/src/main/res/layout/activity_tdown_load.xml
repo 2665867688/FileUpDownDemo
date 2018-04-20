@@ -1,9 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.download.TDownLoadActivity">
+<layout>
 
-</android.support.constraint.ConstraintLayout>
+    <data>
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.download.TDownLoadActivity">
+
+
+        <ProgressBar
+            android:id="@+id/progressBarHorizontal"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:max="100"
+            android:progress="50"
+            android:secondaryProgress="80" />
+
+        <Button
+            android:id="@+id/btn_tdl_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="开始下载" />
+
+        <Button
+            android:id="@+id/btn_tdl_stop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="取消下载" />
+
+    </LinearLayout>
+</layout>
