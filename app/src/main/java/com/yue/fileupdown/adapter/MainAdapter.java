@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.yue.fileupdown.R;
 import com.yue.fileupdown.bean.MainItem;
 import com.yue.fileupdown.databinding.ItemMainBinding;
+import com.yue.fileupdown.listeners.OnRcyItemClickListener;
 
 import java.util.List;
 
@@ -21,26 +22,33 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainHolder> {
 
     private Context context;
     private List<MainItem> list;
-    private ItemMainBinding mainBinding;
+    private OnRcyItemClickListener onRcyItemClickListener;
+
+    public void setOnRcyItemClickListener(OnRcyItemClickListener onRcyItemClickListener) {
+        this.onRcyItemClickListener = onRcyItemClickListener;
+    }
 
     public MainAdapter(Context context, List<MainItem> list) {
         this.context = context;
         this.list = list;
-//        mainBinding = DataBindingUtil.inflate(layoutInflater, R.layout.list_item, viewGroup, false);
     }
 
     @NonNull
     @Override
     public MainHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_main, parent, false);
-        Log.i("MainAdapter", "onCreateViewHolder");
         return new MainHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MainHolder holder, int position) {
-        Log.i("MainAdapter","onBindViewHolder");
+    public void onBindViewHolder(@NonNull MainHolder holder, final int position) {
         holder.tvText.setText(list.get(position).getName() + "\n" + list.get(position).getDesc());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRcyItemClickListener.onItemClick(v, position);
+            }
+        });
     }
 
     @Override
