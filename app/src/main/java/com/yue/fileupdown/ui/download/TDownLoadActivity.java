@@ -14,6 +14,8 @@ import com.yue.fileupdown.R;
 import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.databinding.ActivityTdownLoadBinding;
 
+import java.io.File;
+
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 
@@ -71,6 +73,18 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
     Runnable downRun = new Runnable() {
         @Override
         public void run() {
+            String fileName = Constanct.downLoadUrl.substring(Constanct.downLoadUrl.lastIndexOf("/"));
+            File directory = new File(Constanct.downloadPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            File file = new File(Constanct.downloadPath + fileName);
+            if (!file.exists()) {
+                //删除重新下载
+                file.delete();
+            }
+
 
         }
     };
