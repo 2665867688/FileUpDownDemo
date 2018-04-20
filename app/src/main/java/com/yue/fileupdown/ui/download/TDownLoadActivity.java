@@ -83,7 +83,7 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
             InputStream is = null;
             FileOutputStream fileOutputStream;//写入到文件
             try {
-                long downloadedLength = 0;      // 记录已下载的文件长度
+//                long downloadedLength = 0;      // 记录已下载的文件长度
                 String fileName = Constanct.downLoadUrl.substring(Constanct.downLoadUrl.lastIndexOf("/"));
                 File directory = new File(Constanct.downloadPath);
                 if (!directory.exists()) {
@@ -113,8 +113,8 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
                     byte[] b = new byte[1024];
                     int total = 0;
                     int len;
-                    while((len = is.read())!=-1){
-                        
+                    while((len = is.read(b))!=-1){
+                        total+=len;
                     }
 
                 }
