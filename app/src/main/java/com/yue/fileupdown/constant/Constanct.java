@@ -8,4 +8,7 @@ package com.yue.fileupdown.constant;
  */
 
 public class Constanct {
+
+    /*下载位置*/
+    public final static String downloadPath = "";
 }
