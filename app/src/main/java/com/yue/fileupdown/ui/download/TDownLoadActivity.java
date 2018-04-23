@@ -81,7 +81,7 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
         public void run() {
             File file = null;
             InputStream is = null;
-            FileOutputStream fileOutputStream;//写入到文件
+            FileOutputStream fileOutputStream = null;//写入到文件
             try {
 //                long downloadedLength = 0;      // 记录已下载的文件长度
                 String fileName = Constanct.downLoadUrl.substring(Constanct.downLoadUrl.lastIndexOf("/"));
@@ -108,13 +108,18 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
                         .build();
                 Response response = client.newCall(request).execute();
                 if (response != null) {
+                    if (fileOutputStream == null) {
+                        fileOutputStream = new FileOutputStream(file);
+                    }
                     /*拿到响应体数据流*/
                     is = response.body().byteStream();
                     byte[] b = new byte[1024];
                     int total = 0;
                     int len;
-                    while((len = is.read(b))!=-1){
-                        total+=len;
+                    /*将数据写入文件*/
+                    while ((len = is.read(b)) != -1) {
+                        total += len;
+                        fileOutputStream.write(b, 0, len);
                     }
 
                 }
