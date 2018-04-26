@@ -15,6 +15,14 @@
         tools:context=".ui.download.TDownLoadActivity">
 
 
+        <TextView
+            android:id="@+id/tv_tdl_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="" />
+
         <ProgressBar
             android:id="@+id/progress_tdl"
             style="?android:attr/progressBarStyleHorizontal"
@@ -23,8 +31,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:max="100"
-            android:progress="0"
-            android:secondaryProgress="80" />
+            android:progress="0" />
 
         <Button
             android:id="@+id/btn_tdl_start"
