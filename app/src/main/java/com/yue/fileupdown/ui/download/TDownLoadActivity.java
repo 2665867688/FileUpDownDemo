@@ -121,15 +121,11 @@ public class TDownLoadActivity extends AppCompatActivity implements View.OnClick
                         total += len;
                         fileOutputStream.write(b, 0, len);
                         final int progress = (int) ((total * 100) / contentLength);
-                        final int finalLen = len;
-                        final long finalTotal = total;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mBinding.progressTdl.setProgress(progress);
-                                mBinding.tvTdlProgress.setText("progress:" + progress + "%" +
-                                        "\nlen" + finalLen + "\ntotal" + finalTotal
-                                        + "contentLength" + contentLength);
+                                mBinding.tvTdlProgress.setText("progress:" + progress + "%");
                             }
                         });
                     }
