@@ -58,30 +58,35 @@ public class FileDownLoadUtils {
         DownLoadRangThread thread = new DownLoadRangThread(downloadUrl, directory, fileName, key, new DownloadRangListener() {
             @Override
             public void existed(String key) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.existed(key);
             }
 
             @Override
             public void pause(String key) {
+
                 downloadListener.pause(key);
             }
 
             @Override
             public void canle(String key) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.canle(key);
             }
 
             @Override
             public void failure(String key) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.failure(key);
             }
 
             @Override
             public void success(String key) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.success(key);
             }
 
@@ -92,7 +97,8 @@ public class FileDownLoadUtils {
 
             @Override
             public void error(String key, Exception e) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.error(key, e);
             }
         });
@@ -116,18 +122,22 @@ public class FileDownLoadUtils {
         DownLoadThread thread = new DownLoadThread(downloadUrl, directory, fileName, key, new DownloadListener() {
             @Override
             public void canle(String key) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.canle(key);
             }
 
             @Override
             public void failure(String key) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.failure(key);
             }
 
             @Override
             public void success(String key) {
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.success(key);
             }
 
@@ -138,7 +148,8 @@ public class FileDownLoadUtils {
 
             @Override
             public void error(String key, Exception e) {
-                mHashThreadManager.remove(key);
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
                 downloadListener.error(key, e);
             }
         });
