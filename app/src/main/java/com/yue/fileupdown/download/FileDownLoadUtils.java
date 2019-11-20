@@ -11,7 +11,7 @@ import okhttp3.Response;
 /**
  * @author shimy
  * @create 2019/11/19 13:17
- * @desc 文件下载
+ * @desc 文件下载 此工具类不处理将下载过程保存在数据库以持久化，app退出 下载全部结束，要实现数据库持久化，请在自己的app下实现
  */
 public class FileDownLoadUtils {
 
