@@ -40,5 +40,16 @@ public class TestActivity extends AppCompatActivity {
             sb.append(fileName);
             mBinding.tvShow.setText(sb.toString());
         });
+
+        mBinding.btnTest02.setOnClickListener(v -> {
+
+            try {
+                mBinding.tvShow.setText("哈哈哈");
+                return;
+            } catch (Exception e) {
+            }finally {
+                mBinding.tvShow.setText("呵呵呵");
+            }
+        });
     }
 }

@@ -213,6 +213,7 @@ public class FileDownLoadUtils {
             if (mHashThreadManager.get(key) != null) {
                 IDownLoadThread thread = mHashThreadManager.get(key);
                 thread.cancelDownload();
+                mHashThreadManager.remove(key);
             } else {
                 throw new MyDownloadException("线程查找失败，管理器中没有此线程的运行01", MyDownloadException.Code.NOTHREAD);
             }

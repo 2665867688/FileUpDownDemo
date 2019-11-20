@@ -81,7 +81,8 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                         return;
                     } else if (isPaused) {
                         downloadListener.pause(key);
-                        return;
+                        wait();
+//                        return;
                     } else {
                         total += len;
                         savedFile.write(b, 0, len);
@@ -125,6 +126,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
     @Override
     public void resumeDownload() {
         isPaused = false;
+        notify();
     }
 
     /**

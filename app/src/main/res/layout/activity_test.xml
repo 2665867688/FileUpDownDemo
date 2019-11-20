@@ -19,7 +19,15 @@
         <Button
             android:id="@+id/btn_test01"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="test01" />
+
+
+        <Button
+            android:id="@+id/btn_test02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test02" />
 
     </LinearLayout>
 </layout>
