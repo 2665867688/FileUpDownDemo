@@ -7,8 +7,10 @@ import android.os.Build;
 import android.support.v4.content.FileProvider;
 import android.widget.Toast;
 
+import com.yue.fileupdown.download.DownloadListener;
 import com.yue.fileupdown.download.DownloadRangListener;
 import com.yue.fileupdown.download.FileDownLoadUtils;
+import com.yue.fileupdown.download.MyDownloadException;
 
 import java.io.File;
 
@@ -46,13 +48,17 @@ public class ApkUpdateUtils {
      * @param fileName         存储的文件名
      * @param downloadListener 下载进度监听
      */
-    public void updateApkRang(Context context, final String downloadUrl, final String directory, final String fileName, final DownloadRangListener downloadListener) {
+    public void updateApkRang(Context context, final String downloadUrl, final String directory, final String fileName,String key, final DownloadRangListener downloadListener) {
         if (isDowning) {
             Toast.makeText(context, "下载中，请勿重复点击", Toast.LENGTH_SHORT).show();
             return;
         }
         isDowning = true;
-        FileDownLoadUtils.getInstance().downLoadRang(downloadUrl, directory, fileName, downloadListener);
+        try {
+            FileDownLoadUtils.getInstance().downLoadRang(downloadUrl, directory, fileName, key,downloadListener);
+        } catch (MyDownloadException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -64,13 +70,17 @@ public class ApkUpdateUtils {
      * @param fileName
      * @param downloadListener
      */
-    public void updateApk(Context context, final String downloadUrl, final String directory, final String fileName, final DownloadRangListener downloadListener) {
+    public void updateApk(Context context, final String downloadUrl, final String directory, final String fileName, String key,final DownloadListener downloadListener) {
         if (isDowning) {
             Toast.makeText(context, "下载中，请勿重复点击", Toast.LENGTH_SHORT).show();
             return;
         }
         isDowning = true;
-        FileDownLoadUtils.getInstance().downLoad(downloadUrl, directory, fileName, downloadListener);
+        try {
+            FileDownLoadUtils.getInstance().downLoad(downloadUrl, directory, fileName,key, downloadListener);
+        } catch (MyDownloadException e) {
+            e.printStackTrace();
+        }
     }
 
 

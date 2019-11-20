@@ -24,7 +24,6 @@ public class RangDownLoadActivity extends AppCompatActivity {
     private String fileName = "phone-1.4.0.apk";
     private String path = Constanct.downloadPath;
 
-    private boolean isDownding = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,18 +34,14 @@ public class RangDownLoadActivity extends AppCompatActivity {
 
     private void initView() {
         mBinding.btnDown.setOnClickListener((v) -> {
-            if (!isDownding)
-                isDownding = true;
-            else {
-                Toast.makeText(this, "正在下载中...", Toast.LENGTH_SHORT).show();
-                return;
-            }
             try {
                 FileDownLoadUtils.getInstance().downLoadRang(url, path, fileName, "hello", new DownloadRangListener() {
 
                     @Override
                     public void existed(String key) {
-
+                        runOnUiThread(() -> {
+                            Toast.makeText(RangDownLoadActivity.this, "文件已存在", Toast.LENGTH_SHORT).show();
+                        });
                     }
 
                     @Override
@@ -61,7 +56,6 @@ public class RangDownLoadActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(String key) {
-                        isDownding = false;
                         runOnUiThread(() -> {
                             mBinding.tvShow.setText("下载失败");
                         });
@@ -70,7 +64,6 @@ public class RangDownLoadActivity extends AppCompatActivity {
 
                     @Override
                     public void success(String key) {
-                        isDownding = false;
                         runOnUiThread(() -> {
                             mBinding.tvShow.setText("下载完成");
                         });
@@ -87,15 +80,21 @@ public class RangDownLoadActivity extends AppCompatActivity {
 
                     @Override
                     public void error(String key, Exception e) {
-                        isDownding = false;
                         runOnUiThread(() -> {
-                            mBinding.tvShow.setText(e.getMessage());
+                            mBinding.tvShow.setText("下载异常：" + e.getMessage());
                         });
 
                     }
                 });
             } catch (MyDownloadException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> {
+                    switch (e.code()) {
+                        case REPEAT:
+                            Toast.makeText(this, "重复下载", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                });
             }
         });
     }

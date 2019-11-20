@@ -2,6 +2,7 @@ package com.yue.fileupdown.download;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,6 +36,9 @@ public class FileDownLoadUtils {
 
     private FileDownLoadUtils() {
         client = new OkHttpClient().newBuilder()
+                .readTimeout(30000, TimeUnit.MILLISECONDS)
+                .connectTimeout(30000, TimeUnit.MILLISECONDS)
+                .writeTimeout(30000, TimeUnit.MILLISECONDS)
                 .build();
     }
 
