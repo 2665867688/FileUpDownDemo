@@ -17,6 +17,7 @@ import com.yue.fileupdown.bean.MainItem;
 import com.yue.fileupdown.databinding.ActivityMainBinding;
 import com.yue.fileupdown.listeners.OnRcyItemClickListener;
 import com.yue.fileupdown.ui.RangDownLoadActivity;
+import com.yue.fileupdown.ui.TestActivity;
 import com.yue.fileupdown.ui.download.TDownLoadActivity;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         mList.add(new MainItem("测试简单下载", "测试简单下载", TDownLoadActivity.class));
         mList.add(new MainItem("断点下载", "断点下载", RangDownLoadActivity.class));
+        mList.add(new MainItem("测试", "测试", TestActivity.class));
         mAdapter.notifyDataSetChanged();
     }
 

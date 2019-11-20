@@ -55,10 +55,16 @@ public class FileDownLoadUtils {
      * @param key              某次下载的key 用于下载的暂停 开始 取消操作
      * @param downloadListener 监听接口
      */
-    public void downLoadRang(final String downloadUrl, final String directory, final String fileName, String key, final DownloadRangListener downloadListener) throws MyDownloadException {
+    public void downLoadRang(String downloadUrl, String directory, String fileName, String key, DownloadRangListener downloadListener) throws MyDownloadException {
         if (mHashThreadManager.containsKey(key) && mHashThreadManager.get(key) != null) {
             throw new MyDownloadException("此key下载已存在，下载重复，请确认你的下载是否正在进行中！！！", MyDownloadException.Code.REPEAT);
         }
+        if (directory.lastIndexOf("/") != -1)
+            directory = directory.substring(0, (directory.length() - 1));
+
+        if (fileName.indexOf("/", 0) != -1)
+            fileName = fileName.substring(1, fileName.length());
+
         DownLoadRangThread thread = new DownLoadRangThread(downloadUrl, directory, fileName, key, new DownloadRangListener() {
             @Override
             public void existed(String key) {
@@ -119,10 +125,15 @@ public class FileDownLoadUtils {
      * @param key              某次下载的key 用于下载的暂停 开始 取消操作
      * @param downloadListener 监听接口
      */
-    public void downLoad(final String downloadUrl, final String directory, final String fileName, String key, final DownloadListener downloadListener) throws MyDownloadException {
+    public void downLoad(String downloadUrl, String directory, String fileName, String key, DownloadListener downloadListener) throws MyDownloadException {
         if (mHashThreadManager.containsKey(key) && mHashThreadManager.get(key) != null) {
             throw new MyDownloadException("此key下载已存在，下载重复，请确认你的下载是否正在进行中！！！", MyDownloadException.Code.REPEAT);
         }
+        if (directory.lastIndexOf("/") != -1)
+            directory = directory.substring(0, (directory.length() - 1));
+
+        if (fileName.indexOf("/", 0) != -1)
+            fileName = fileName.substring(1, fileName.length());
         DownLoadThread thread = new DownLoadThread(downloadUrl, directory, fileName, key, new DownloadListener() {
             @Override
             public void canle(String key) {
