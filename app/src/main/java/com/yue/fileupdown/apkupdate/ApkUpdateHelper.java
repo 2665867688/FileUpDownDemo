@@ -23,8 +23,8 @@ public class ApkUpdateHelper {
      * @param fileName    存储文件名
      * @param dir         存储路径
      */
-    public ApkUpdateHelper(Context context, String downLoadUrl, String fileName, String dir,String authority) {
-        this(context, downLoadUrl, fileName, dir, authority,null);
+    public ApkUpdateHelper(Context context, String downLoadUrl, String fileName, String dir, String authority) {
+        this(context, downLoadUrl, fileName, dir, authority, null);
     }
 
     /**
@@ -32,9 +32,10 @@ public class ApkUpdateHelper {
      * @param downLoadUrl        下载地址
      * @param fileName           存储文件名
      * @param dir                存储路径
+     * @param authority          下载完成时自动跳转到安装页面需要此参数
      * @param notificationParams 通知帮助类
      */
-    public ApkUpdateHelper(Context context, String downLoadUrl, String fileName, String dir,String authority, ApkNotificationParams notificationParams) {
+    public ApkUpdateHelper(Context context, String downLoadUrl, String fileName, String dir, String authority, ApkNotificationParams notificationParams) {
         this.context = context;
         this.downLoadUrl = downLoadUrl;
         this.fileName = fileName;
@@ -45,7 +46,7 @@ public class ApkUpdateHelper {
                 dir = dir.substring(0, (dir.length() - 1));
             if (fileName.indexOf("/", 0) != -1)
                 fileName = fileName.substring(1, fileName.length());
-            this.notificationParams = new ApkNotificationParams.Builder(context, dir + File.separator + fileName,authority).create();
+            this.notificationParams = new ApkNotificationParams.Builder(context, dir + File.separator + fileName, authority).create();
         }
     }
 
