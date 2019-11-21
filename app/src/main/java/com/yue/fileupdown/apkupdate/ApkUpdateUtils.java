@@ -118,4 +118,17 @@ public class ApkUpdateUtils {
         }
     }
 
+
+    public static String byteHandle(long byteLength) {
+        String text = "0kb";
+        double byteLengthCopy = byteLength;
+        if (byteLengthCopy < 0)
+            return byteLength + "";
+        if (byteLengthCopy < 1024 * 1024) {
+            text = String.format("%.2fkb", byteLengthCopy / 1024.00);
+        } else {
+            text = String.format("%.2fmb", byteLengthCopy / (1024.00 * 1024.00));
+        }
+        return text;
+    }
 }

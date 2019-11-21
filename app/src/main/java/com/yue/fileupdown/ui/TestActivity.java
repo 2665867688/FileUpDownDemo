@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.yue.fileupdown.R;
 import com.yue.fileupdown.apkupdate.ApkUpdateService;
+import com.yue.fileupdown.apkupdate.ApkUpdateUtils;
 import com.yue.fileupdown.databinding.ActivityTestBinding;
 
 /**
@@ -54,7 +55,9 @@ public class TestActivity extends AppCompatActivity {
         });
 
         mBinding.btnTest03.setOnClickListener(v -> {
-//            ApkUpdateService.startService(this,"url","dir","fileName");
+            long num1 = 1024*10;
+
+            mBinding.tvShow.setText(ApkUpdateUtils.byteHandle(num1));
         });
     }
 }

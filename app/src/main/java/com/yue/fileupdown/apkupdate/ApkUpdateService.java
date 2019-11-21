@@ -81,6 +81,7 @@ public class ApkUpdateService extends Service {
         try {
             FileDownLoadUtils.getInstance().downLoadRang(key, downloadUrl, directory, fileName, new DownloadRangListener() {
                 private int currentProgress;
+                private long contentLengthL;
 
                 @Override
                 public void existed(String key) {
@@ -116,9 +117,21 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
+                    //progress > 100 ? "下载完成" : progress + "/100"
                     currentProgress = progress;
+                    contentLengthL = contentLength;
+                    String contentText = "";
+                    if (contentLength < 1024 * 1024)
+                        contentText = downloadedLength / 1024.00 + "kb/" + contentLength / 1024 + "kb";
+                    else {
+                        if (downloadedLength < 1024 * 1024)
+                            contentText = downloadedLength / 1024 + "kb/" + contentLength / (1024 * 1024) + "m";
+                        else
+                            contentText = downloadedLength / (1024 * 1024) + "m/" + contentLength / (1024 * 1024) + "m";
+                    }
+                    String finalContentText = contentText;
                     mainHandle().post(() -> {
-                        mNotificationHelper.notifiactionProgress(progress, progress > 100 ? "下载完成" : progress + "/100", ApkNotificationHelper.ApkNotificationType.PROGRESS);
+                        mNotificationHelper.notifiactionProgress(progress, finalContentText, ApkNotificationHelper.ApkNotificationType.PROGRESS);
                     });
                 }
 
@@ -169,8 +182,9 @@ public class ApkUpdateService extends Service {
                 @Override
                 public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
                     currentProgress = progress;
+                    String text = ApkUpdateUtils.byteHandle(downloadedLength) + "/" + ApkUpdateUtils.byteHandle(contentLength);
                     mainHandle().post(() -> {
-                        mNotificationHelper.notifiactionProgress(progress, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
+                        mNotificationHelper.notifiactionProgress(progress, text, ApkNotificationHelper.ApkNotificationType.PROGRESS);
                     });
                 }
 

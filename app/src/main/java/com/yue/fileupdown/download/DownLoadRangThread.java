@@ -27,7 +27,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
     private boolean isCanceled = false;
     private boolean isPaused = false;
 
-    public DownLoadRangThread( String key,String downloadUrl, String directory, String fileName, DownloadRangListener downloadListener) {
+    public DownLoadRangThread(String key, String downloadUrl, String directory, String fileName, DownloadRangListener downloadListener) {
         super();
         this.downloadListener = downloadListener;
         this.downloadUrl = downloadUrl;
@@ -72,7 +72,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                 is = response.body().byteStream();//。响应体中的流通管道
                 savedFile = new RandomAccessFile(file, "rw");
                 savedFile.seek(downloadedLength); // 跳过已下载的字节
-                byte[] b = new byte[1024];
+                byte[] b = new byte[2048];
                 int total = 0;
                 int len;
                 while ((len = is.read(b)) != -1) {
