@@ -42,9 +42,9 @@ public class ApkUpdateHelper {
         this.dir = dir;
         this.notificationParams = notificationParams;
         if (this.notificationParams == null) {
-            if (dir.lastIndexOf("/") != -1)
+            if (dir.endsWith("/"))
                 dir = dir.substring(0, (dir.length() - 1));
-            if (fileName.indexOf("/", 0) != -1)
+            if (fileName.startsWith("/"))
                 fileName = fileName.substring(1, fileName.length());
             this.notificationParams = new ApkNotificationParams.Builder(context, dir + File.separator + fileName, authority).create();
         }

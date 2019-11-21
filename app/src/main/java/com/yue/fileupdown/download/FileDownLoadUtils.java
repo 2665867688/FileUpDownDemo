@@ -61,10 +61,10 @@ public class FileDownLoadUtils {
         if (mHashThreadManager.containsKey(key) && mHashThreadManager.get(key) != null) {
             throw new MyDownloadException("此key下载已存在，下载重复，请确认你的下载是否正在进行中！！！", MyDownloadException.Code.REPEAT);
         }
-        if (directory.lastIndexOf("/") != -1)
+        if (directory.endsWith("/"))
             directory = directory.substring(0, (directory.length() - 1));
 
-        if (fileName.indexOf("/", 0) != -1)
+        if (fileName.startsWith("/"))
             fileName = fileName.substring(1, fileName.length());
 
         DownLoadRangThread thread = new DownLoadRangThread(key, downloadUrl, directory, fileName, new DownloadRangListener() {
@@ -130,10 +130,10 @@ public class FileDownLoadUtils {
         if (mHashThreadManager.containsKey(key) && mHashThreadManager.get(key) != null) {
             throw new MyDownloadException("此key下载已存在，下载重复，请确认你的下载是否正在进行中！！！", MyDownloadException.Code.REPEAT);
         }
-        if (directory.lastIndexOf("/") != -1)
+        if (directory.endsWith("/"))
             directory = directory.substring(0, (directory.length() - 1));
 
-        if (fileName.indexOf("/", 0) != -1)
+        if (fileName.startsWith("/"))
             fileName = fileName.substring(1, fileName.length());
         DownLoadThread thread = new DownLoadThread(downloadUrl, directory, fileName, key, new DownloadListener() {
             @Override

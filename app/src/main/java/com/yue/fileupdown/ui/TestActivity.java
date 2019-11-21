@@ -32,10 +32,10 @@ public class TestActivity extends AppCompatActivity {
         mBinding.btnTest01.setOnClickListener(v -> {
             StringBuilder sb = new StringBuilder();
             sb.append("url:");
-            if (url.lastIndexOf("/") != -1)
+            if (url.endsWith("/"))
                 url = url.substring(0, url.length() - 1);
             sb.append(url);
-            if (fileName.indexOf("/", 0) != -1)
+            if (fileName.startsWith("/"))
                 fileName = fileName.substring(1, fileName.length());
             sb.append("\nfilename:");
             sb.append(fileName);
@@ -48,7 +48,7 @@ public class TestActivity extends AppCompatActivity {
                 mBinding.tvShow.setText("哈哈哈");
                 return;
             } catch (Exception e) {
-            }finally {
+            } finally {
                 mBinding.tvShow.setText("呵呵呵");
             }
         });

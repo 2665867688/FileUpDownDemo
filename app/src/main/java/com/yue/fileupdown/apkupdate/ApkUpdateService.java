@@ -59,9 +59,9 @@ public class ApkUpdateService extends Service {
         mFileName = intent.getStringExtra(ARG_FILENAME);
         mDir = intent.getStringExtra(ARG_SAVEDIR);
         mNotificationParams = intent.getParcelableExtra(ARG_NOTIFICATIONPARAMS);
-        if (mDir.lastIndexOf("/") != -1)
+        if (mDir.endsWith("/"))
             mDir = mDir.substring(0, (mDir.length() - 1));
-        if (mFileName.indexOf("/", 0) != -1)
+        if (mFileName.startsWith("/"))
             mFileName = mFileName.substring(1, mFileName.length());
         mNotificationHelper = new ApkNotificationHelper(this, mNotificationParams);
         updateApkRang(this, KEY_APK, mDownLoadUrl, mDir, mFileName);
@@ -79,7 +79,7 @@ public class ApkUpdateService extends Service {
      */
     public void updateApkRang(Context context, String key, final String downloadUrl, final String directory, final String fileName) {
         try {
-            FileDownLoadUtils.getInstance().downLoadRang(key,downloadUrl, directory, fileName,  new DownloadRangListener() {
+            FileDownLoadUtils.getInstance().downLoadRang(key, downloadUrl, directory, fileName, new DownloadRangListener() {
                 private int currentProgress;
 
                 @Override
@@ -109,6 +109,7 @@ public class ApkUpdateService extends Service {
                 @Override
                 public void success(String key) {
                     mainHandle().post(() -> {
+                        currentProgress = 100;
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                     });
                 }
@@ -117,7 +118,7 @@ public class ApkUpdateService extends Service {
                 public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
                     currentProgress = progress;
                     mainHandle().post(() -> {
-                        mNotificationHelper.notifiactionProgress(progress, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
+                        mNotificationHelper.notifiactionProgress(progress, progress > 100 ? "下载完成" : progress + "/100", ApkNotificationHelper.ApkNotificationType.PROGRESS);
                     });
                 }
 
@@ -143,7 +144,7 @@ public class ApkUpdateService extends Service {
      */
     public void updateApk(Context context, String key, final String downloadUrl, final String directory, final String fileName) {
         try {
-            FileDownLoadUtils.getInstance().downLoad(key,downloadUrl, directory, fileName,  new DownloadListener() {
+            FileDownLoadUtils.getInstance().downLoad(key, downloadUrl, directory, fileName, new DownloadListener() {
                 private int currentProgress;
 
                 @Override

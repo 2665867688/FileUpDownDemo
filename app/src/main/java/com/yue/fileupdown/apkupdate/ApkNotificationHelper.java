@@ -64,9 +64,7 @@ public class ApkNotificationHelper {
             case SUCCESS:
                 builder.setContentText(contentText);
                 builder.setProgress(PROGRESS_MAX, progress, false);
-                /*下载完成点击可完成安装*/
-                if (progress == 100)
-                    builder.setContentIntent(pendingIntent);
+                builder.setContentIntent(pendingIntent);
                 break;
             case PROGRESS:
                 builder.setContentText(contentText);

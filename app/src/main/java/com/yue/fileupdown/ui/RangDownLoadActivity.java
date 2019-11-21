@@ -24,8 +24,9 @@ import com.yue.fileupdown.service.NotificationService;
 public class RangDownLoadActivity extends AppCompatActivity {
 
     private ActivityRangDownLoadBinding mBinding;
-    private String url = "https://app-10034140.cos.ap-shanghai.myqcloud.com/app/pad-1.4.0.apk";
-    private String fileName = "phone-1.4.0.apk";
+    //    private String url = "https://app-10034140.cos.ap-shanghai.myqcloud.com/app/pad-1.4.0.apk";
+    private String url = "https://t.alipayobjects.com/L1/71/100/and/alipay_wap_main.apk";
+    private String fileName = "/alipay_wap_main.apk";
     private String path = Constanct.downloadPath;
 
     private ApkUpdateHelper apkUpdateHelper;
@@ -34,7 +35,7 @@ public class RangDownLoadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_rang_down_load);
-        apkUpdateHelper = new ApkUpdateHelper(this, url, fileName, path,"com.yue.fileupdown.fileprovider");
+        apkUpdateHelper = new ApkUpdateHelper(this, url, fileName, path, "com.yue.fileupdown.fileprovider");
         initView();
     }
 
