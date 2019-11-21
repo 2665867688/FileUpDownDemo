@@ -1,5 +1,7 @@
 package com.yue.fileupdown.download;
 
+import android.app.IntentService;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;

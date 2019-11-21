@@ -4,7 +4,9 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.widget.Toast;
 
@@ -57,13 +59,13 @@ public class ApkUpdateService extends Service {
         mFileName = intent.getStringExtra(ARG_FILENAME);
         mDir = intent.getStringExtra(ARG_SAVEDIR);
         mNotificationParams = intent.getParcelableExtra(ARG_NOTIFICATIONPARAMS);
-        updateApkRang(this, KEY_APK, mDownLoadUrl, mDir, mFileName);
         if (mDir.lastIndexOf("/") != -1)
             mDir = mDir.substring(0, (mDir.length() - 1));
         if (mFileName.indexOf("/", 0) != -1)
             mFileName = mFileName.substring(1, mFileName.length());
         mNotificationHelper = new ApkNotificationHelper(this, mNotificationParams);
         updateApkRang(this, KEY_APK, mDownLoadUrl, mDir, mFileName);
+        mNotificationHelper.notifiactionProgress(0, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -77,10 +79,14 @@ public class ApkUpdateService extends Service {
      */
     public void updateApkRang(Context context, String key, final String downloadUrl, final String directory, final String fileName) {
         try {
-            FileDownLoadUtils.getInstance().downLoadRang(downloadUrl, directory, fileName, key, new DownloadRangListener() {
+            FileDownLoadUtils.getInstance().downLoadRang(key,downloadUrl, directory, fileName,  new DownloadRangListener() {
+                private int currentProgress;
+
                 @Override
                 public void existed(String key) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                    });
                 }
 
                 @Override
@@ -95,22 +101,31 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void failure(String key) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载失败", ApkNotificationHelper.ApkNotificationType.ERROR);
+                    });
                 }
 
                 @Override
                 public void success(String key) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                    });
                 }
 
                 @Override
                 public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
-
+                    currentProgress = progress;
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(progress, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
+                    });
                 }
 
                 @Override
                 public void error(String key, Exception e) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
+                    });
                 }
             });
         } catch (MyDownloadException e) {
@@ -128,7 +143,9 @@ public class ApkUpdateService extends Service {
      */
     public void updateApk(Context context, String key, final String downloadUrl, final String directory, final String fileName) {
         try {
-            FileDownLoadUtils.getInstance().downLoad(downloadUrl, directory, fileName, key, new DownloadListener() {
+            FileDownLoadUtils.getInstance().downLoad(key,downloadUrl, directory, fileName,  new DownloadListener() {
+                private int currentProgress;
+
                 @Override
                 public void canle(String key) {
 
@@ -136,22 +153,31 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void failure(String key) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载失败", ApkNotificationHelper.ApkNotificationType.ERROR);
+                    });
                 }
 
                 @Override
                 public void success(String key) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                    });
                 }
 
                 @Override
                 public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
-
+                    currentProgress = progress;
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(progress, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
+                    });
                 }
 
                 @Override
                 public void error(String key, Exception e) {
-
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
+                    });
                 }
             });
         } catch (MyDownloadException e) {
@@ -159,6 +185,15 @@ public class ApkUpdateService extends Service {
         }
     }
 
+    private Handler mainHandle() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            // If we finish marking off of the main thread, we need to
+            // actually do it on the main thread to ensure correct ordering.
+            Handler mainThread = new Handler(Looper.getMainLooper());
+            return mainThread;
+        }
+        return null;
+    }
 
     public static void startService(Context context, String downLoadUrl, String dir, String fileName, ApkNotificationParams params) {
         Intent intent = new Intent(context, ApkUpdateService.class);

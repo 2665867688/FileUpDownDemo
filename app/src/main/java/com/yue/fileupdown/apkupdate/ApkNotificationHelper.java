@@ -21,10 +21,15 @@ import com.yue.fileupdown.R;
  */
 public class ApkNotificationHelper {
 
+    public enum ApkNotificationType {
+        SUCCESS,
+        ERROR,
+        PROGRESS
+    }
 
     private ApkNotificationParams params;
     private Context context;
-    NotificationManagerCompat mNotificationManagerCompat;
+    private NotificationManagerCompat mNotificationManagerCompat;
 
     public ApkNotificationHelper(Context context, ApkNotificationParams params) {
         this.params = params;
@@ -35,53 +40,55 @@ public class ApkNotificationHelper {
     /**
      * @param progress    进度
      * @param contentText 显示内容
-     * @param isRetry     失败时是否显示重试按钮，正在进行中请设置成false
+     *                    progress > 100 ? "下载完成" : progress + "/100"
      */
-    public void notifiaction(int progress, String contentText, boolean isRetry) {
+    public void notifiactionProgress(int progress, String contentText, ApkNotificationType type) {
         NotificationCompat.Action retryAction = null;
-        if (isRetry) {
-            /**
-             * 重试按钮点击事件 下载失败时由isRetry决定
-             */
-            Intent retryIntent = new Intent(context, ApkUpdateService.class);
-            PendingIntent dismissPendingIntent = PendingIntent.getService(context, 0, retryIntent, 0);
-            retryAction =
-                    new NotificationCompat.Action.Builder(
-                            R.drawable.ic_launcher_background,
-                            "重试",
-                            dismissPendingIntent)
-                            .build();
-        }
 //        NotificationManagerCompat mNotificationManagerCompat = NotificationManagerCompat.from(context.getApplicationContext());
         Intent intent = ApkUpdateUtils.getInstallIntent(context, params.getPath(), params.getAuthority());
         /*清除栈*/
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         /*通知栏点击事件*/
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-//        progress > 100 ? "下载完成" : progress + "/100"
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
                 ApkUpdateUtils.createNotificationChannel(context, params.getChannelId(), params.getChannelName(), params.getChannelDescription()))
                 .setSmallIcon(params.getSmallIcon())
                 .setLargeIcon(params.getLargeIcon())
                 .setContentTitle(params.getContentTitle())
-                .setContentText(contentText)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 /*点击完通知自动消失*/
                 .setAutoCancel(true);
 
-        /**
-         * 下载完成点击可完成安装
-         */
-        if (progress == 100)
-            builder.setContentIntent(pendingIntent);
-        if (retryAction != null)
-            builder.addAction(retryAction);
-
         int PROGRESS_MAX = 100;
-        builder.setProgress(PROGRESS_MAX, progress, false);
+        switch (type) {
+            case SUCCESS:
+                builder.setContentText(contentText);
+                builder.setProgress(PROGRESS_MAX, progress, false);
+                /*下载完成点击可完成安装*/
+                if (progress == 100)
+                    builder.setContentIntent(pendingIntent);
+                break;
+            case PROGRESS:
+                builder.setContentText(contentText);
+                builder.setProgress(PROGRESS_MAX, progress, false);
+                break;
+            case ERROR:
+                builder.setContentText(contentText);
+                Intent retryIntent = new Intent(context, ApkUpdateService.class);
+                PendingIntent retryPendingIntent = PendingIntent.getService(context, 0, retryIntent, 0);
+                retryAction = new NotificationCompat.Action.Builder(
+                        R.drawable.ic_launcher_background,
+                        "重试",
+                        retryPendingIntent)
+                        .build();
+                builder.addAction(retryAction);
+                break;
+        }
+
         Notification notificationCompat = builder.build();
         /*不可清除*/
-        notificationCompat.flags |= Notification.FLAG_NO_CLEAR;
+        if (type == ApkNotificationType.PROGRESS)
+            notificationCompat.flags |= Notification.FLAG_NO_CLEAR;
         mNotificationManagerCompat.notify(params.getNotifactionId(), notificationCompat);
     }
 

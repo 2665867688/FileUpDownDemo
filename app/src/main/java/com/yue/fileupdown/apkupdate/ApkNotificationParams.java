@@ -138,12 +138,13 @@ public class ApkNotificationParams implements Parcelable {
         private String channelDescription = "app更新";//通道详情
         private int smallIcon = R.mipmap.ic_launcher_round;//小图标
         private Bitmap largeIcon;//大图标 一般是应用图标
-        private String contentTitle;//通知栏标题
+        private String contentTitle = "应用下载";//通知栏标题
         private int notifactionId = 1001;//通知id
 
-        public Builder(Context context, String path) {
+        public Builder(Context context, String path, String authority) {
             this.context = context;
             this.path = path;
+            this.authority = authority;
         }
 
         public ApkNotificationParams.Builder setAuthority(String authority) {

@@ -35,8 +35,8 @@ public interface DownloadRangListener {
      *
      * @param key
      * @param progress
-     * @param downloadedLength 已下载长度
-     * @param contentLength    文件总长度
+     * @param downloadedLength 已下载长度 单位：字节
+     * @param contentLength    文件总长度 单位：字节 1kb=1024byte 1m=1024kb
      * @param speed            下载速度
      */
     void progress(String key, int progress, long downloadedLength, long contentLength, double speed);

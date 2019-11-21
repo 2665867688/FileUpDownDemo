@@ -54,7 +54,7 @@ public class TestActivity extends AppCompatActivity {
         });
 
         mBinding.btnTest03.setOnClickListener(v -> {
-            ApkUpdateService.startService(this,"url","dir","fileName");
+//            ApkUpdateService.startService(this,"url","dir","fileName");
         });
     }
 }
