@@ -27,7 +27,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
     private boolean isCanceled = false;
     private boolean isPaused = false;
 
-    public DownLoadRangThread(String downloadUrl, String directory, String fileName, String key, DownloadRangListener downloadListener) {
+    public DownLoadRangThread( String key,String downloadUrl, String directory, String fileName, DownloadRangListener downloadListener) {
         super();
         this.downloadListener = downloadListener;
         this.downloadUrl = downloadUrl;
@@ -88,7 +88,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                         savedFile.write(b, 0, len);
                         // 计算已下载的百分比
                         int progress = (int) ((total + downloadedLength) * 100 / contentLength);
-                        downloadListener.progress(key, progress);
+                        downloadListener.progress(key, progress, total + downloadedLength, contentLength, 100);
                     }
                 }
                 response.body().close();

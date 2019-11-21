@@ -55,7 +55,7 @@ public class FileDownLoadUtils {
      * @param key              某次下载的key 用于下载的暂停 开始 取消操作
      * @param downloadListener 监听接口
      */
-    public void downLoadRang(String downloadUrl, String directory, String fileName, String key, DownloadRangListener downloadListener) throws MyDownloadException {
+    public void downLoadRang(String key, String downloadUrl, String directory, String fileName, DownloadRangListener downloadListener) throws MyDownloadException {
         if (mHashThreadManager.containsKey(key) && mHashThreadManager.get(key) != null) {
             throw new MyDownloadException("此key下载已存在，下载重复，请确认你的下载是否正在进行中！！！", MyDownloadException.Code.REPEAT);
         }
@@ -65,7 +65,7 @@ public class FileDownLoadUtils {
         if (fileName.indexOf("/", 0) != -1)
             fileName = fileName.substring(1, fileName.length());
 
-        DownLoadRangThread thread = new DownLoadRangThread(downloadUrl, directory, fileName, key, new DownloadRangListener() {
+        DownLoadRangThread thread = new DownLoadRangThread(key, downloadUrl, directory, fileName, new DownloadRangListener() {
             @Override
             public void existed(String key) {
                 if (mHashThreadManager.containsKey(key))
@@ -75,7 +75,6 @@ public class FileDownLoadUtils {
 
             @Override
             public void pause(String key) {
-
                 downloadListener.pause(key);
             }
 
@@ -101,8 +100,8 @@ public class FileDownLoadUtils {
             }
 
             @Override
-            public void progress(String key, int progress) {
-                downloadListener.progress(key, progress);
+            public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
+                downloadListener.progress(key, progress, downloadedLength, contentLength, speed);
             }
 
             @Override
@@ -125,7 +124,7 @@ public class FileDownLoadUtils {
      * @param key              某次下载的key 用于下载的暂停 开始 取消操作
      * @param downloadListener 监听接口
      */
-    public void downLoad(String downloadUrl, String directory, String fileName, String key, DownloadListener downloadListener) throws MyDownloadException {
+    public void downLoad(String key, String downloadUrl, String directory, String fileName, DownloadListener downloadListener) throws MyDownloadException {
         if (mHashThreadManager.containsKey(key) && mHashThreadManager.get(key) != null) {
             throw new MyDownloadException("此key下载已存在，下载重复，请确认你的下载是否正在进行中！！！", MyDownloadException.Code.REPEAT);
         }
@@ -157,9 +156,10 @@ public class FileDownLoadUtils {
             }
 
             @Override
-            public void progress(String key, int progress) {
-                downloadListener.progress(key, progress);
+            public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
+                downloadListener.progress(key, progress, downloadedLength, contentLength, speed);
             }
+
 
             @Override
             public void error(String key, Exception e) {
@@ -215,10 +215,10 @@ public class FileDownLoadUtils {
                 thread.cancelDownload();
                 mHashThreadManager.remove(key);
             } else {
-                throw new MyDownloadException("线程查找失败，管理器中没有此线程的运行01", MyDownloadException.Code.NOTHREAD);
+                throw new MyDownloadException("下载线程查找失败，管理器中没有此线程的运行01", MyDownloadException.Code.NOTHREAD);
             }
         } else {
-            throw new MyDownloadException("线程查找失败，管理器中没有此线程的运行02", MyDownloadException.Code.NOTHREAD);
+            throw new MyDownloadException("下载线程查找失败，管理器中没有此线程的运行02", MyDownloadException.Code.NOTHREAD);
         }
     }
 

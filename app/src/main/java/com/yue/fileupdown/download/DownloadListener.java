@@ -27,8 +27,11 @@ public interface DownloadListener {
      *
      * @param key
      * @param progress
+     * @param downloadedLength 已下载长度
+     * @param contentLength    文件总长度
+     * @param speed            下载速度
      */
-    void progress(String key, int progress);
+    void progress(String key, int progress, long downloadedLength, long contentLength, double speed);
 
     /**
      * 异常

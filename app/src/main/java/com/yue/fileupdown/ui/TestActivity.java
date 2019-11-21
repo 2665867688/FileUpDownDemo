@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.yue.fileupdown.R;
+import com.yue.fileupdown.apkupdate.ApkUpdateService;
 import com.yue.fileupdown.databinding.ActivityTestBinding;
 
 /**
@@ -50,6 +51,10 @@ public class TestActivity extends AppCompatActivity {
             }finally {
                 mBinding.tvShow.setText("呵呵呵");
             }
+        });
+
+        mBinding.btnTest03.setOnClickListener(v -> {
+            ApkUpdateService.startService(this,"url","dir","fileName");
         });
     }
 }

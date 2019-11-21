@@ -32,66 +32,8 @@ import okhttp3.OkHttpClient;
  * @desc apk更新工具类
  */
 public class ApkUpdateUtils {
-    private static volatile ApkUpdateUtils Instance = null;
+
     private static final String TAG = ApkUpdateUtils.class.getSimpleName();
-    private OkHttpClient mOkHttpClient;
-
-    private boolean isDowning = false;
-
-    public static ApkUpdateUtils getInstance() {
-        ApkUpdateUtils localInstance = Instance;
-        if (localInstance == null) {
-            synchronized (ApkUpdateUtils.class) {
-                localInstance = Instance;
-                if (localInstance == null)
-                    Instance = localInstance = new ApkUpdateUtils();
-            }
-        }
-        return localInstance;
-    }
-
-    /**
-     * 支持断点续传
-     *
-     * @param downloadUrl      下载地址
-     * @param directory        存储路径
-     * @param fileName         存储的文件名
-     * @param downloadListener 下载进度监听
-     */
-    public void updateApkRang(Context context, final String downloadUrl, final String directory, final String fileName, String key, final DownloadRangListener downloadListener) {
-        if (isDowning) {
-            Toast.makeText(context, "下载中，请勿重复点击", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        isDowning = true;
-        try {
-            FileDownLoadUtils.getInstance().downLoadRang(downloadUrl, directory, fileName, key, downloadListener);
-        } catch (MyDownloadException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 不支持断点续传
-     *
-     * @param context
-     * @param downloadUrl
-     * @param directory
-     * @param fileName
-     * @param downloadListener
-     */
-    public void updateApk(Context context, final String downloadUrl, final String directory, final String fileName, String key, final DownloadListener downloadListener) {
-        if (isDowning) {
-            Toast.makeText(context, "下载中，请勿重复点击", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        isDowning = true;
-        try {
-            FileDownLoadUtils.getInstance().downLoad(downloadUrl, directory, fileName, key, downloadListener);
-        } catch (MyDownloadException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -99,9 +41,9 @@ public class ApkUpdateUtils {
      *
      * @param context
      * @param path      安装包路径
-     * @param authority provider
+     * @param authority fileprovider
      */
-    public void install(Context context, String path, String authority) {
+    public static void install(Context context, String path, String authority) {
         File file = new File(path);
         Uri apkURI = FileProvider.getUriForFile(context, authority, file);
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -124,7 +66,7 @@ public class ApkUpdateUtils {
      * @param authority
      * @return
      */
-    public Intent getInstallIntent(Context context, String path, String authority) {
+    public static Intent getInstallIntent(Context context, String path, String authority) {
         File file = new File(path);
         Uri apkURI = FileProvider.getUriForFile(context, authority, file);
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -137,45 +79,6 @@ public class ApkUpdateUtils {
             intent.setDataAndType(Uri.parse("file://" + path), "application/vnd.android.package-archive");
         }
         return intent;
-    }
-
-    public void notifactionProgress(Context context, int progress, String path, String authority, String channelId, String channelName,
-                                    String channelDescription, int smallIcon, Bitmap largeIcon,
-                                    String contentTitle, String contextText, int notifactionId, boolean isRetry) {
-        NotificationCompat.Action retryAction = null;
-        if (isRetry) {
-            Intent dismissIntent = new Intent(context, MainActivity.class);
-            PendingIntent dismissPendingIntent = PendingIntent.getService(context, 0, dismissIntent, 0);
-            retryAction =
-                    new NotificationCompat.Action.Builder(
-                            R.drawable.ic_launcher_background,
-                            "重试",
-                            dismissPendingIntent)
-                            .build();
-        }
-        NotificationManagerCompat mNotificationManagerCompat = NotificationManagerCompat.from(context.getApplicationContext());
-        Intent intent = getInstallIntent(context, path, authority);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-//        progress > 100 ? "下载完成" : progress + "/100"
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
-                createNotificationChannel(context, channelId, channelName, channelDescription))
-                .setSmallIcon(smallIcon)
-                .setLargeIcon(largeIcon)
-                .setContentTitle(contentTitle)
-                .setContentText(contextText)
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setAutoCancel(true);
-        if (retryAction != null)
-            builder.addAction(retryAction);
-
-        int PROGRESS_MAX = 100;
-        builder.setProgress(PROGRESS_MAX, progress, false);
-        Notification notificationCompat = builder.build();
-        /*不可清除*/
-        notificationCompat.flags |= Notification.FLAG_NO_CLEAR;
-        mNotificationManagerCompat.notify(notifactionId, notificationCompat);
     }
 
 

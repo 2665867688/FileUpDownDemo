@@ -27,7 +27,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
     private String fileName;//下载文件命名
     private String key;//线程key
 
-    public DownLoadThread(String downloadUrl, String directory, String fileName, String key, DownloadListener downloadListener) {
+    public DownLoadThread(String key,String downloadUrl, String directory, String fileName,  DownloadListener downloadListener) {
         super();
         this.downloadUrl = downloadUrl;
         this.downloadListener = downloadListener;
@@ -79,7 +79,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
                     total += len;
                     fileOutputStream.write(b, 0, len);
                     final int progress = (int) ((total * 100) / contentLength);
-                    downloadListener.progress(key, progress);
+                    downloadListener.progress(key, progress,total,contentLength,100);
                 }
                 response.body().close();
                 downloadListener.success(key);

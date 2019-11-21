@@ -28,6 +28,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="test02" />
+        <Button
+            android:id="@+id/btn_test03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test03" />
 
     </LinearLayout>
 </layout>
