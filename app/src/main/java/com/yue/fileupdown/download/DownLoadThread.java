@@ -23,7 +23,10 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
     private String fileName;//下载文件命名
     private String key;//线程key
 
-    public DownLoadThread(String key,String downloadUrl, String directory, String fileName,  DownloadListener downloadListener) {
+    /*文件的绝对路径*/
+    private String filePath = FileDownloadUtils.slashEndRemove(directory) + File.separator + FileDownloadUtils.slashStartRemove(fileName);
+
+    public DownLoadThread(String key, String downloadUrl, String directory, String fileName, DownloadListener downloadListener) {
         super();
         this.downloadUrl = downloadUrl;
         this.downloadListener = downloadListener;
@@ -44,10 +47,10 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
             if (!directoryFile.exists()) {
                 directoryFile.mkdirs();
             }
-            file = new File(directory + File.separator + fileName);
+            file = new File(filePath);
             if (file.exists()) {
                 //删除重新下载
-                downloadListener.error(key, new MyDownloadException("文件已存在", MyDownloadException.Code.UNKNOWN));
+                downloadListener.error(key, filePath, new MyDownloadException("文件已存在", MyDownloadException.Code.UNKNOWN));
                 return;
             }
 
@@ -75,15 +78,15 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
                     total += len;
                     fileOutputStream.write(b, 0, len);
                     final int progress = (int) ((total * 100) / contentLength);
-                    downloadListener.progress(key, progress,total,contentLength,100);
+                    downloadListener.progress(key, filePath, progress, total, contentLength, 100);
                 }
                 response.body().close();
-                downloadListener.success(key);
+                downloadListener.success(key, filePath);
                 return;
             }
 
         } catch (IOException e) {
-            downloadListener.error(key, e);
+            downloadListener.error(key, filePath, e);
             return;
         } finally {
             try {
@@ -97,7 +100,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
                 e.printStackTrace();
             }
         }
-        downloadListener.failure(key);
+        downloadListener.failure(key, filePath);
     }
 
 
