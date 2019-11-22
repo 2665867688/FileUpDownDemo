@@ -24,7 +24,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
     private String key;//线程key
 
     /*文件的绝对路径*/
-    private String filePath = FileDownloadUtils.slashEndRemove(directory) + File.separator + FileDownloadUtils.slashStartRemove(fileName);
+    private String filePath;
 
     public DownLoadThread(String key, String downloadUrl, String directory, String fileName, DownloadListener downloadListener) {
         super();
@@ -33,6 +33,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
         this.directory = directory;
         this.fileName = fileName;
         this.key = key;
+        filePath = FileDownloadUtils.slashEndRemove(directory) + File.separator + FileDownloadUtils.slashStartRemove(fileName);
         client = FileDownLoadHelper.getInstance().getClient();
     }
 

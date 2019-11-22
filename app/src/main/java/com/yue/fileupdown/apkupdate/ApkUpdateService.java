@@ -27,13 +27,15 @@ public class ApkUpdateService extends Service {
     private String mFileName;
     private static final String ARG_SAVEDIR = "ARG_SAVEDIR";
     private String mDir;
+    private static final String ARG_AUTHORITY = "ARG_AUTHORITY";
+    private String mAuthority;
     private static final String ARG_NOTIFICATIONPARAMS = "ARG_NOTIFICATIONPARAMS";
     private ApkNotificationParams mNotificationParams;
 
     private ApkNotificationHelper mNotificationHelper;
 
-    private final String KEY_APK = "apk_update";
-    private String tempSuffix = ".temp";
+    private final String KEY_APK = "apk_update";//线程管理器中的线程key
+    private String tempSuffix = ".temp";//临时文件保存后缀
 
     public ApkUpdateService() {
 
@@ -55,14 +57,10 @@ public class ApkUpdateService extends Service {
         mDownLoadUrl = intent.getStringExtra(ARG_DOWNLOADURL);
         mFileName = intent.getStringExtra(ARG_FILENAME);
         mDir = intent.getStringExtra(ARG_SAVEDIR);
+        mAuthority = intent.getStringExtra(ARG_AUTHORITY);
         mNotificationParams = intent.getParcelableExtra(ARG_NOTIFICATIONPARAMS);
-        if (mDir.endsWith("/"))
-            mDir = mDir.substring(0, (mDir.length() - 1));
-        if (mFileName.startsWith("/"))
-            mFileName = mFileName.substring(1, mFileName.length());
         mNotificationHelper = new ApkNotificationHelper(this, mNotificationParams);
         updateApkRang(this, KEY_APK, mDownLoadUrl, mDir, mFileName);
-        mNotificationHelper.notifiactionProgress(0, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -85,6 +83,7 @@ public class ApkUpdateService extends Service {
             } else {
                 fileNameCopy = fileNameCopy + tempSuffix;
             }
+            mNotificationHelper.notifiactionProgress(0, "", ApkNotificationHelper.ApkNotificationType.PROGRESS);
             FileDownLoadHelper.getInstance().downLoadRang(key, downloadUrl, directory, fileNameCopy, new DownloadRangListener() {
                 private int currentProgress;
 
@@ -120,6 +119,7 @@ public class ApkUpdateService extends Service {
                     }
                     mainHandle().post(() -> {
                         currentProgress = 100;
+                        ApkUpdateUtils.install(ApkUpdateService.this, path, mAuthority);
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                     });
                 }
@@ -209,11 +209,12 @@ public class ApkUpdateService extends Service {
         return null;
     }
 
-    public static void startService(Context context, String downLoadUrl, String dir, String fileName, ApkNotificationParams params) {
+    public static void startService(Context context, String downLoadUrl, String dir, String fileName, String authority, ApkNotificationParams params) {
         Intent intent = new Intent(context, ApkUpdateService.class);
         intent.putExtra(ARG_DOWNLOADURL, downLoadUrl);
         intent.putExtra(ARG_SAVEDIR, dir);
         intent.putExtra(ARG_FILENAME, fileName);
+        intent.putExtra(ARG_AUTHORITY, authority);
         intent.putExtra(ARG_NOTIFICATIONPARAMS, params);
         context.startService(intent);
     }

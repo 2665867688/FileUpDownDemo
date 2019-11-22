@@ -14,6 +14,7 @@ public class ApkUpdateHelper {
     private String downLoadUrl;
     private String fileName;
     private String dir;
+    private String authority;
     private ApkNotificationParams notificationParams;
 
 
@@ -40,6 +41,7 @@ public class ApkUpdateHelper {
         this.downLoadUrl = downLoadUrl;
         this.fileName = fileName;
         this.dir = dir;
+        this.authority = authority;
         this.notificationParams = notificationParams;
         if (this.notificationParams == null) {
             if (dir.endsWith("/"))
@@ -52,6 +54,6 @@ public class ApkUpdateHelper {
 
 
     public void updateApk() {
-        ApkUpdateService.startService(context, downLoadUrl, dir, fileName, notificationParams);
+        ApkUpdateService.startService(context, downLoadUrl, dir, fileName, authority, notificationParams);
     }
 }
