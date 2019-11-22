@@ -46,8 +46,6 @@ public class ApkNotificationHelper {
         NotificationCompat.Action retryAction = null;
 //        NotificationManagerCompat mNotificationManagerCompat = NotificationManagerCompat.from(context.getApplicationContext());
         Intent intent = ApkUpdateUtils.getInstallIntent(context, params.getPath(), params.getAuthority());
-        /*清除栈*/
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         /*通知栏点击事件*/
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
