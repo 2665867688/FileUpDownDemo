@@ -1,19 +1,15 @@
 package com.yue.fileupdown.apkupdate;
 
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Parcelable;
-import android.widget.Toast;
 
-import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.download.DownloadListener;
 import com.yue.fileupdown.download.DownloadRangListener;
-import com.yue.fileupdown.download.FileDownLoadUtils;
+import com.yue.fileupdown.download.FileDownLoadHelper;
 import com.yue.fileupdown.download.MyDownloadException;
 
 import java.io.File;
@@ -37,6 +33,7 @@ public class ApkUpdateService extends Service {
     private ApkNotificationHelper mNotificationHelper;
 
     private final String KEY_APK = "apk_update";
+    private String tempSuffix = ".temp";
 
     public ApkUpdateService() {
 
@@ -79,14 +76,22 @@ public class ApkUpdateService extends Service {
      */
     public void updateApkRang(Context context, String key, final String downloadUrl, final String directory, final String fileName) {
         try {
-            FileDownLoadUtils.getInstance().downLoadRang(key, downloadUrl, directory, fileName, new DownloadRangListener() {
+            String path = ApkUpdateUtils.slashEndRemove(directory) + File.separator + ApkUpdateUtils.slashStartRemove(fileName);
+            String fileNameCopy = fileName;
+            File file = new File(path);
+            if (file.exists()) {
+                mNotificationHelper.notifiactionProgress(100, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                return;
+            } else {
+                fileNameCopy = fileNameCopy + tempSuffix;
+            }
+            FileDownLoadHelper.getInstance().downLoadRang(key, downloadUrl, directory, fileNameCopy, new DownloadRangListener() {
                 private int currentProgress;
-                private long contentLengthL;
 
                 @Override
                 public void existed(String key) {
                     mainHandle().post(() -> {
-                        mNotificationHelper.notifiactionProgress(currentProgress, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                        mNotificationHelper.notifiactionProgress(100, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                     });
                 }
 
@@ -109,6 +114,10 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void success(String key) {
+                    File file = new File(path + tempSuffix);
+                    if (file.exists()) {
+                        file.renameTo(new File(path));
+                    }
                     mainHandle().post(() -> {
                         currentProgress = 100;
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
@@ -147,7 +156,7 @@ public class ApkUpdateService extends Service {
      */
     public void updateApk(Context context, String key, final String downloadUrl, final String directory, final String fileName) {
         try {
-            FileDownLoadUtils.getInstance().downLoad(key, downloadUrl, directory, fileName, new DownloadListener() {
+            FileDownLoadHelper.getInstance().downLoad(key, downloadUrl, directory, fileName, new DownloadListener() {
                 private int currentProgress;
 
                 @Override

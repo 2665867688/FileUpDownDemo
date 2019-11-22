@@ -1,10 +1,8 @@
 package com.yue.fileupdown.ui;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import com.yue.fileupdown.R;
@@ -12,9 +10,8 @@ import com.yue.fileupdown.apkupdate.ApkUpdateHelper;
 import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.databinding.ActivityRangDownLoadBinding;
 import com.yue.fileupdown.download.DownloadRangListener;
-import com.yue.fileupdown.download.FileDownLoadUtils;
+import com.yue.fileupdown.download.FileDownLoadHelper;
 import com.yue.fileupdown.download.MyDownloadException;
-import com.yue.fileupdown.service.NotificationService;
 
 /**
  * @author shimy
@@ -24,8 +21,8 @@ import com.yue.fileupdown.service.NotificationService;
 public class RangDownLoadActivity extends AppCompatActivity {
 
     private ActivityRangDownLoadBinding mBinding;
-        private String url = "https://app-10034140.cos.ap-shanghai.myqcloud.com/app/pad-1.4.0.apk";
-//    private String url = "https://t.alipayobjects.com/L1/71/100/and/alipay_wap_main.apk";
+    private String url = "https://app-10034140.cos.ap-shanghai.myqcloud.com/app/pad-1.4.0.apk";
+    //    private String url = "https://t.alipayobjects.com/L1/71/100/and/alipay_wap_main.apk";
 //    private String fileName = "/alipay_wap_main.apk";
     private String fileName = "pad-1.4.0.apk";
     private String path = Constanct.downloadPath;
@@ -43,27 +40,27 @@ public class RangDownLoadActivity extends AppCompatActivity {
     private void initView() {
         mBinding.btnDown.setOnClickListener((v) -> {
             try {
-                FileDownLoadUtils.getInstance().downLoadRang(url, path, fileName, "hello", new DownloadRangListener() {
+                FileDownLoadHelper.getInstance().downLoadRang(url, path, fileName, "hello", new DownloadRangListener() {
 
                     @Override
-                    public void existed(String key) {
+                    public void existed(String key, String filePath) {
                         runOnUiThread(() -> {
                             Toast.makeText(RangDownLoadActivity.this, "文件已存在", Toast.LENGTH_SHORT).show();
                         });
                     }
 
                     @Override
-                    public void pause(String key) {
+                    public void pause(String key, String filePath) {
 
                     }
 
                     @Override
-                    public void canle(String key) {
+                    public void canle(String key, String filePath) {
 
                     }
 
                     @Override
-                    public void failure(String key) {
+                    public void failure(String key, String filePath) {
                         runOnUiThread(() -> {
                             mBinding.tvShow.setText("下载失败");
                         });
@@ -71,7 +68,7 @@ public class RangDownLoadActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void success(String key) {
+                    public void success(String key, String filePath) {
                         runOnUiThread(() -> {
                             mBinding.tvShow.setText("下载完成");
                         });
@@ -79,7 +76,7 @@ public class RangDownLoadActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
+                    public void progress(String key, String filePath, int progress, long downloadedLength, long contentLength, double speed) {
                         runOnUiThread(() -> {
                             mBinding.tvShow.setText(progress + "/100");
                         });
@@ -87,7 +84,7 @@ public class RangDownLoadActivity extends AppCompatActivity {
 
 
                     @Override
-                    public void error(String key, Exception e) {
+                    public void error(String key, String filePath, Exception e) {
                         runOnUiThread(() -> {
                             mBinding.tvShow.setText("下载异常：" + e.getMessage());
                         });

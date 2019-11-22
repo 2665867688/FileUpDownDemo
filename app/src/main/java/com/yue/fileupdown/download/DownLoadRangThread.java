@@ -1,7 +1,5 @@
 package com.yue.fileupdown.download;
 
-import android.support.annotation.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +24,8 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
     private String key;//线程key
     private boolean isCanceled = false;
     private boolean isPaused = false;
+    /*文件的绝对路径*/
+    private String filePath = FileDownloadUtils.slashEndRemove(directory) + File.separator + FileDownloadUtils.slashStartRemove(fileName);
 
     public DownLoadRangThread(String key, String downloadUrl, String directory, String fileName, DownloadRangListener downloadListener) {
         super();
@@ -34,7 +34,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
         this.directory = directory;
         this.fileName = fileName;
         this.key = key;
-        client = FileDownLoadUtils.getInstance().getClient();
+        client = FileDownLoadHelper.getInstance().getClient();
     }
 
     @Override
@@ -48,17 +48,17 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
             File dirctoryFile = new File(directory);
             if (!dirctoryFile.exists())
                 dirctoryFile.mkdirs();
-            file = new File(directory + File.separator + fileName);
+            file = new File(filePath);
             if (file.exists()) {
                 downloadedLength = file.length();
             }
             long contentLength = getContentLength(downloadUrl);
             if (contentLength == 0) {
-                downloadListener.error(key, new MyDownloadException("contentLength==0", MyDownloadException.Code.UNKNOWN));
+                downloadListener.error(key, filePath, new MyDownloadException("contentLength==0", MyDownloadException.Code.UNKNOWN));
                 return;
             } else if (contentLength == downloadedLength) {
                 // 已下载字节和文件总字节相等，说明已经下载完成了
-                downloadListener.existed(key);
+                downloadListener.existed(key, filePath);
                 return;
             }
 
@@ -72,15 +72,15 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                 is = response.body().byteStream();//。响应体中的流通管道
                 savedFile = new RandomAccessFile(file, "rw");
                 savedFile.seek(downloadedLength); // 跳过已下载的字节
-                byte[] b = new byte[1024<<7];
+                byte[] b = new byte[1024 << 7];
                 int total = 0;
                 int len;
                 while ((len = is.read(b)) != -1) {
                     if (isCanceled) {
-                        downloadListener.canle(key);
+                        downloadListener.canle(key, filePath);
                         return;
                     } else if (isPaused) {
-                        downloadListener.pause(key);
+                        downloadListener.pause(key, filePath);
                         wait();
 //                        return;
                     } else {
@@ -88,18 +88,18 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                         savedFile.write(b, 0, len);
                         // 计算已下载的百分比
                         int progress = (int) ((total + downloadedLength) * 100 / contentLength);
-                        downloadListener.progress(key, progress, total + downloadedLength, contentLength, 100);
+                        downloadListener.progress(key, filePath, progress, total + downloadedLength, contentLength, 100);
                     }
                 }
                 response.body().close();
-                downloadListener.success(key);
+                downloadListener.success(key, filePath);
                 return;
             }
         } catch (IOException e) {
-            downloadListener.error(key, e);
+            downloadListener.error(key, filePath, e);
             return;
         } catch (InterruptedException e) {
-            downloadListener.error(key, e);
+            downloadListener.error(key, filePath, e);
             return;
         } finally {
             try {
@@ -116,7 +116,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                 e.printStackTrace();
             }
         }
-        downloadListener.failure(key);
+        downloadListener.failure(key, filePath);
     }
 
     public String getKey() {
@@ -150,6 +150,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
 
     /**
      * 获取长度 同步请求
+     *
      * @param downloadUrl
      * @return
      * @throws IOException

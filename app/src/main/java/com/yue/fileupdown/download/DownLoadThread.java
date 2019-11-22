@@ -1,9 +1,5 @@
 package com.yue.fileupdown.download;
 
-import android.support.annotation.NonNull;
-
-import com.yue.fileupdown.constant.Constanct;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +30,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
         this.directory = directory;
         this.fileName = fileName;
         this.key = key;
-        client = FileDownLoadUtils.getInstance().getClient();
+        client = FileDownLoadHelper.getInstance().getClient();
     }
 
     @Override

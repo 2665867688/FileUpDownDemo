@@ -1,30 +1,15 @@
 package com.yue.fileupdown.apkupdate;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.FileProvider;
-import android.widget.Toast;
-
-import com.yue.fileupdown.MainActivity;
-import com.yue.fileupdown.R;
-import com.yue.fileupdown.download.DownloadListener;
-import com.yue.fileupdown.download.DownloadRangListener;
-import com.yue.fileupdown.download.FileDownLoadUtils;
-import com.yue.fileupdown.download.MyDownloadException;
 
 import java.io.File;
-
-import okhttp3.OkHttpClient;
 
 /**
  * @author shimy
@@ -130,5 +115,19 @@ public class ApkUpdateUtils {
             text = String.format("%.2fmb", byteLengthCopy / (1024.00 * 1024.00));
         }
         return text;
+    }
+
+    public static String slashStartRemove(String str) {
+        String strCopy = str;
+        if (strCopy.startsWith("/"))
+            strCopy = strCopy.substring(1, strCopy.length());
+        return strCopy;
+    }
+
+    public static String slashEndRemove(String str) {
+        String strCopy = str;
+        if (strCopy.endsWith("/"))
+            strCopy = strCopy.substring(0, (strCopy.length() - 1));
+        return strCopy;
     }
 }

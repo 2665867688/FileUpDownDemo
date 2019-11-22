@@ -1,10 +1,7 @@
 package com.yue.fileupdown.download;
 
-import android.app.IntentService;
-
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,28 +12,28 @@ import okhttp3.Response;
  * @create 2019/11/19 13:17
  * @desc 文件下载 此工具类不处理将下载过程保存在数据库以持久化，app退出 下载全部结束，要实现数据库持久化，请在自己的app下实现
  */
-public class FileDownLoadUtils {
+public class FileDownLoadHelper {
 
 
-    private static volatile FileDownLoadUtils Instance = null;
-    private static final String TAG = FileDownLoadUtils.class.getSimpleName();
+    private static volatile FileDownLoadHelper Instance = null;
+    private static final String TAG = FileDownLoadHelper.class.getSimpleName();
     private OkHttpClient client;
     private HashMap<String, IDownLoadThread> mHashThreadManager = new HashMap<>();
 
 
-    public static FileDownLoadUtils getInstance() {
-        FileDownLoadUtils localInstance = Instance;
+    public static FileDownLoadHelper getInstance() {
+        FileDownLoadHelper localInstance = Instance;
         if (localInstance == null) {
-            synchronized (FileDownLoadUtils.class) {
+            synchronized (FileDownLoadHelper.class) {
                 localInstance = Instance;
                 if (localInstance == null)
-                    Instance = localInstance = new FileDownLoadUtils();
+                    Instance = localInstance = new FileDownLoadHelper();
             }
         }
         return localInstance;
     }
 
-    private FileDownLoadUtils() {
+    private FileDownLoadHelper() {
         client = new OkHttpClient().newBuilder()
 //                .readTimeout(30000, TimeUnit.MILLISECONDS)
 //                .connectTimeout(30000, TimeUnit.MILLISECONDS)
@@ -69,48 +66,48 @@ public class FileDownLoadUtils {
 
         DownLoadRangThread thread = new DownLoadRangThread(key, downloadUrl, directory, fileName, new DownloadRangListener() {
             @Override
-            public void existed(String key) {
+            public void existed(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.existed(key);
+                downloadListener.existed(key, filePath);
             }
 
             @Override
-            public void pause(String key) {
-                downloadListener.pause(key);
+            public void pause(String key, String filePath) {
+                downloadListener.pause(key, filePath);
             }
 
             @Override
-            public void canle(String key) {
+            public void canle(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.canle(key);
+                downloadListener.canle(key, filePath);
             }
 
             @Override
-            public void failure(String key) {
+            public void failure(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.failure(key);
+                downloadListener.failure(key, filePath);
             }
 
             @Override
-            public void success(String key) {
+            public void success(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.success(key);
+                downloadListener.success(key, filePath);
             }
 
             @Override
-            public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
-                downloadListener.progress(key, progress, downloadedLength, contentLength, speed);
+            public void progress(String key, String filePath, int progress, long downloadedLength, long contentLength, double speed) {
+                downloadListener.progress(key, filePath, progress, downloadedLength, contentLength, speed);
             }
 
             @Override
-            public void error(String key, Exception e) {
+            public void error(String key, String filePath, Exception e) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.error(key, e);
+                downloadListener.error(key, filePath, e);
             }
         });
         mHashThreadManager.put(key, thread);
@@ -137,37 +134,37 @@ public class FileDownLoadUtils {
             fileName = fileName.substring(1, fileName.length());
         DownLoadThread thread = new DownLoadThread(downloadUrl, directory, fileName, key, new DownloadListener() {
             @Override
-            public void canle(String key) {
+            public void canle(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.canle(key);
+                downloadListener.canle(key, filePath);
             }
 
             @Override
-            public void failure(String key) {
+            public void failure(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.failure(key);
+                downloadListener.failure(key, filePath);
             }
 
             @Override
-            public void success(String key) {
+            public void success(String key, String filePath) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.success(key);
+                downloadListener.success(key, filePath);
             }
 
             @Override
-            public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
-                downloadListener.progress(key, progress, downloadedLength, contentLength, speed);
+            public void progress(String key, String filePath, int progress, long downloadedLength, long contentLength, double speed) {
+                downloadListener.progress(key, filePath, progress, downloadedLength, contentLength, speed);
             }
 
 
             @Override
-            public void error(String key, Exception e) {
+            public void error(String key, String filePath, Exception e) {
                 if (mHashThreadManager.containsKey(key))
                     mHashThreadManager.remove(key);
-                downloadListener.error(key, e);
+                downloadListener.error(key, filePath, e);
             }
         });
         mHashThreadManager.put(key, thread);
@@ -236,4 +233,6 @@ public class FileDownLoadUtils {
         }
         return 0;
     }
+
+
 }
