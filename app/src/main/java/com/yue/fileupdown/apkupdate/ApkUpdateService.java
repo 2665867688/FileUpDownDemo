@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.widget.Toast;
 
 import com.yue.fileupdown.download.DownloadListener;
 import com.yue.fileupdown.download.DownloadRangListener;
@@ -91,6 +92,7 @@ public class ApkUpdateService extends Service {
                 public void existed(String key, String filePath) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(100, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                        stopSelf();
                     });
                 }
 
@@ -122,6 +124,7 @@ public class ApkUpdateService extends Service {
                         ApkUpdateUtils.install(ApkUpdateService.this, path, mAuthority);
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                     });
+                    stopSelf();
                 }
 
                 @Override
@@ -142,7 +145,16 @@ public class ApkUpdateService extends Service {
                 }
             });
         } catch (MyDownloadException e) {
-            e.printStackTrace();
+            switch (e.code()) {
+                case REPEAT:
+                    Toast.makeText(context, "已有此线程：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
+                case NOTHREAD:
+                case UNKNOWN:
+                    e.printStackTrace();
+                    break;
+            }
+
         }
     }
 
