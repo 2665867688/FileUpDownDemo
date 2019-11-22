@@ -55,9 +55,10 @@ public class TestActivity extends AppCompatActivity {
         });
 
         mBinding.btnTest03.setOnClickListener(v -> {
-            long num1 = 1024*10;
+//            long num1 = 1024*10;
 
-            mBinding.tvShow.setText(ApkUpdateUtils.byteHandle(num1));
+            int num1 = 3<<5;
+            mBinding.tvShow.setText(num1+"");
         });
     }
 }
