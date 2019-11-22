@@ -33,6 +33,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="test03" />
-
+        <Button
+            android:id="@+id/btn_test04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test04" />
     </LinearLayout>
 </layout>

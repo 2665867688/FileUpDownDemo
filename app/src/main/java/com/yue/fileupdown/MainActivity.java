@@ -2,7 +2,10 @@ package com.yue.fileupdown;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        requestPermissions();
+        checkPermission();
         mList = new ArrayList<>();
         mAdapter = new MainAdapter(this, mList);
 
@@ -73,39 +76,55 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private void requestPermissions() {
-        RxPermissions rxPermissions = new RxPermissions(this);
-        rxPermissions
-                .requestEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(new Consumer<Permission>() {
-                               @Override
-                               public void accept(Permission permission) throws Exception {
-                                   if (permission.granted) {
-                                       // 所有权限都已授权
-//                                       Toast.makeText(TSimpleMapActivity.this, "权限请求成功", Toast.LENGTH_SHORT).show();
-                                   } else if (permission.shouldShowRequestPermissionRationale) {
-                                       // 至少有一个权限未被授予 没有选中 [不在询问按钮]
-                                       Toast.makeText(MainActivity.this, "有权限未申请成功" + permission.name, Toast.LENGTH_SHORT).show();
-                                       if (permission.name.equals(Manifest.permission.ACCESS_COARSE_LOCATION) || permission.name.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                                           Toast.makeText(MainActivity.this, "定位权限未被授予", Toast.LENGTH_SHORT).show();
-                                       } else if (permission.name.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                           Toast.makeText(MainActivity.this, "存储权限未被授予", Toast.LENGTH_SHORT).show();
-                                       }
-                                   } else {
-                                       // 至少有一个权限未被授予 选中了[不在询问按钮]
-                                   }
-                               }
-                           }, new Consumer<Throwable>() {
-                               @Override
-                               public void accept(Throwable t) {
-                                   Toast.makeText(MainActivity.this, "权限请求错误", Toast.LENGTH_SHORT).show();
-                               }
-                           },
-                        new Action() {
-                            @Override
-                            public void run() {
-//                                Toast.makeText(TSimpleMapActivity.this, "权限请求完成", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+    //////////////////////////////////    动态权限申请   ////////////////////////////////////////
+    private final static int REQ_PERMISSION_CODE = 0x1000;
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissions = new ArrayList<>();
+
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)) {
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (permissions.size() != 0) {
+                ActivityCompat.requestPermissions(this,
+                        (String[]) permissions.toArray(new String[0]),
+                        REQ_PERMISSION_CODE);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQ_PERMISSION_CODE:
+                for (int ret : grantResults) {
+                    if (PackageManager.PERMISSION_GRANTED != ret) {
+                        Toast.makeText(this, "用户没有允许需要的权限，使用可能会受到限制！", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
