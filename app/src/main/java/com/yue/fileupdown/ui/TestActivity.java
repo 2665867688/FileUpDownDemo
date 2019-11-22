@@ -68,23 +68,8 @@ public class TestActivity extends AppCompatActivity {
         mBinding.btnTest03.setOnClickListener(v -> {
 //            long num1 = 1024*10;
 
-//            int num1 = 3<<5;
-//            mBinding.tvShow.setText(num1+"");
-            String fileName = "pad-1.4.0.apk";
-            String path = Constanct.downloadPath;
-//            ApkUpdateUtils.install(this, Constanct.downloadPath + File.separator +"pad-1.4.0.apk", "com.yue.fileupdown.fileprovider");
-            File file = new File(Constanct.downloadPath + File.separator + "pad-1.4.0.apk");
-            Uri apkURI = FileProvider.getUriForFile(this, "com.yue.fileupdown.fileprovider", file);
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            if (Build.VERSION.SDK_INT >= 24) {  //判读版本是否在7.0以上
-                //添加这一句表示对目标应用临时授权该Uri所代表的文件
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
-            } else {
-                intent.setDataAndType(Uri.parse("file://" + Constanct.downloadPath + File.separator + "pad-1.4.0.apk"), "application/vnd.android.package-archive");
-            }
-            startActivity(intent);
+            int num1 = 2<<8;
+            mBinding.tvShow.setText(num1+"");
         });
         mBinding.btnTest04.setOnClickListener(v -> {
             notifaction();
