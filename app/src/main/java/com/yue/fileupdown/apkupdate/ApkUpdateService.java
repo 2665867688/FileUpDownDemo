@@ -89,31 +89,31 @@ public class ApkUpdateService extends Service {
                 private int currentProgress;
 
                 @Override
-                public void existed(String key) {
+                public void existed(String key, String filePath) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(100, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                     });
                 }
 
                 @Override
-                public void pause(String key) {
+                public void pause(String key, String filePath) {
 
                 }
 
                 @Override
-                public void canle(String key) {
+                public void canle(String key, String filePath) {
 
                 }
 
                 @Override
-                public void failure(String key) {
+                public void failure(String key, String filePath) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载失败", ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
                 }
 
                 @Override
-                public void success(String key) {
+                public void success(String key, String filePath) {
                     File file = new File(path + tempSuffix);
                     if (file.exists()) {
                         file.renameTo(new File(path));
@@ -125,7 +125,7 @@ public class ApkUpdateService extends Service {
                 }
 
                 @Override
-                public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
+                public void progress(String key, String filePath, int progress, long downloadedLength, long contentLength, double speed) {
                     //progress > 100 ? "下载完成" : progress + "/100"
                     currentProgress = progress;
                     String text = ApkUpdateUtils.byteHandle(downloadedLength) + "/" + ApkUpdateUtils.byteHandle(contentLength);
@@ -135,7 +135,7 @@ public class ApkUpdateService extends Service {
                 }
 
                 @Override
-                public void error(String key, Exception e) {
+                public void error(String key, String filePath, Exception e) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
@@ -160,26 +160,26 @@ public class ApkUpdateService extends Service {
                 private int currentProgress;
 
                 @Override
-                public void canle(String key) {
+                public void canle(String key, String filePath) {
 
                 }
 
                 @Override
-                public void failure(String key) {
+                public void failure(String key, String filePath) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载失败", ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
                 }
 
                 @Override
-                public void success(String key) {
+                public void success(String key, String filePath) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载成功，点击安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                     });
                 }
 
                 @Override
-                public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
+                public void progress(String key, String filePath, int progress, long downloadedLength, long contentLength, double speed) {
                     currentProgress = progress;
                     String text = ApkUpdateUtils.byteHandle(downloadedLength) + "/" + ApkUpdateUtils.byteHandle(contentLength);
                     mainHandle().post(() -> {
@@ -188,7 +188,7 @@ public class ApkUpdateService extends Service {
                 }
 
                 @Override
-                public void error(String key, Exception e) {
+                public void error(String key, String filePath, Exception e) {
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
