@@ -68,12 +68,12 @@ public class ApkUpdateUtils {
      */
     public static Intent getInstallIntent(Context context, String path, String authority) {
         File file = new File(path);
-        Uri apkURI = FileProvider.getUriForFile(context, authority, file);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         if (Build.VERSION.SDK_INT >= 24) {  //判读版本是否在7.0以上
             //添加这一句表示对目标应用临时授权该Uri所代表的文件
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri apkURI = FileProvider.getUriForFile(context, authority, file);
             intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
         } else {
             intent.setDataAndType(Uri.parse("file://" + path), "application/vnd.android.package-archive");

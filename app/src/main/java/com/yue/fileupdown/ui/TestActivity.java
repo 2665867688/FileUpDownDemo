@@ -8,6 +8,7 @@ import android.view.View;
 import com.yue.fileupdown.R;
 import com.yue.fileupdown.apkupdate.ApkUpdateService;
 import com.yue.fileupdown.apkupdate.ApkUpdateUtils;
+import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.databinding.ActivityTestBinding;
 
 /**
@@ -57,8 +58,11 @@ public class TestActivity extends AppCompatActivity {
         mBinding.btnTest03.setOnClickListener(v -> {
 //            long num1 = 1024*10;
 
-            int num1 = 3<<5;
-            mBinding.tvShow.setText(num1+"");
+//            int num1 = 3<<5;
+//            mBinding.tvShow.setText(num1+"");
+            String fileName = "/alipay_wap_main.apk";
+            String path = Constanct.downloadPath;
+            ApkUpdateUtils.install(this, path + fileName, "com.yue.fileupdown.fileprovider");
         });
     }
 }

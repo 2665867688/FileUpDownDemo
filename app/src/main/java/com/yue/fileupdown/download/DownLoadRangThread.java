@@ -72,7 +72,7 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
                 is = response.body().byteStream();//。响应体中的流通管道
                 savedFile = new RandomAccessFile(file, "rw");
                 savedFile.seek(downloadedLength); // 跳过已下载的字节
-                byte[] b = new byte[1024<<5];
+                byte[] b = new byte[1024<<6];
                 int total = 0;
                 int len;
                 while ((len = is.read(b)) != -1) {
@@ -148,6 +148,12 @@ public class DownLoadRangThread extends Thread implements IDownLoadThread {
         isCanceled = true;
     }
 
+    /**
+     * 获取长度 同步请求
+     * @param downloadUrl
+     * @return
+     * @throws IOException
+     */
     private long getContentLength(String downloadUrl) throws IOException {
         Request request = new Request.Builder()
                 .url(downloadUrl)

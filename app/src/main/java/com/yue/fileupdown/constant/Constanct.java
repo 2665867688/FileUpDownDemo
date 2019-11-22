@@ -15,5 +15,5 @@ public class Constanct {
     public final static String downLoadUrl = "https://raw.githubusercontent.com/guolindev/eclipse/master/eclipse-inst-win64.exe";
 
     /*下载位置*/
-    public final static String downloadPath = Environment.getExternalStorageDirectory().getPath() + "/aashimydown/";
+    public final static String downloadPath = Environment.getExternalStorageDirectory().getPath() + "/aashimydown";
 }
