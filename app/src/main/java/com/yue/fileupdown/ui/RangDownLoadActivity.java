@@ -7,11 +7,15 @@ import android.widget.Toast;
 
 import com.yue.fileupdown.R;
 import com.yue.fileupdown.apkupdate.ApkUpdateHelper;
+import com.yue.fileupdown.apkupdate.ApkUpdateObserver;
 import com.yue.fileupdown.constant.Constanct;
 import com.yue.fileupdown.databinding.ActivityRangDownLoadBinding;
 import com.yue.fileupdown.download.DownloadRangListener;
 import com.yue.fileupdown.download.FileDownLoadHelper;
 import com.yue.fileupdown.download.MyDownloadException;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * @author shimy
@@ -106,6 +110,35 @@ public class RangDownLoadActivity extends AppCompatActivity {
             apkUpdateHelper.updateApk();
 //            Intent intent = new Intent(this, NotificationService.class);
 //            startService(intent);
+        });
+        ApkUpdateObserver.getInstance().addObserver((o, arg) -> {
+            if (arg != null && arg instanceof ApkUpdateObserver.ApkUpdateEvent) {
+                ApkUpdateObserver.ApkUpdateEvent event = (ApkUpdateObserver.ApkUpdateEvent) arg;
+                runOnUiThread(() -> {
+                    switch (event.getType()) {
+                        case SUCCESS:
+                            mBinding.tvShow.setText("下载成功");
+                            break;
+                        case PROGRESS:
+                            mBinding.tvShow.setText(event.getProgress() + "");
+                            break;
+                        case ERROR:
+
+                            break;
+                        case CANLE:
+                            break;
+                        case PAUSE:
+                            break;
+                        case EXISTED:
+                            mBinding.tvShow.setText("文件已存在");
+                            break;
+                        case FAILURE:
+                            break;
+                    }
+                });
+
+            }
+
         });
     }
 

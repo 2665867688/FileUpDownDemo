@@ -80,6 +80,11 @@ public class ApkUpdateService extends Service {
             File file = new File(path);
             if (file.exists()) {
                 mNotificationHelper.notifiactionProgress(100, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
+                ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                event.setType(ApkUpdateObserver.Type.EXISTED);
+                event.setThreadKey(key);
+                event.setFilePath(path);
+                ApkUpdateObserver.getInstance().update(event);
                 return;
             } else {
                 fileNameCopy = fileNameCopy + tempSuffix;
@@ -90,6 +95,12 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void existed(String key, String filePath) {
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.EXISTED);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    ApkUpdateObserver.getInstance().update(event);
+
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(100, "文件已存在，点击可安装", ApkNotificationHelper.ApkNotificationType.SUCCESS);
                         stopSelf();
@@ -98,16 +109,29 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void pause(String key, String filePath) {
-
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.PAUSE);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    ApkUpdateObserver.getInstance().update(event);
                 }
 
                 @Override
                 public void canle(String key, String filePath) {
-
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.CANLE);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    ApkUpdateObserver.getInstance().update(event);
                 }
 
                 @Override
                 public void failure(String key, String filePath) {
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.FAILURE);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    ApkUpdateObserver.getInstance().update(event);
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载失败", ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
@@ -115,6 +139,11 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void success(String key, String filePath) {
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.SUCCESS);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    ApkUpdateObserver.getInstance().update(event);
                     File file = new File(path + tempSuffix);
                     if (file.exists()) {
                         file.renameTo(new File(path));
@@ -129,6 +158,14 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void progress(String key, String filePath, int progress, long downloadedLength, long contentLength, double speed) {
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.PROGRESS);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    event.setProgress(progress);
+                    event.setDownloadedLength(downloadedLength);
+                    event.setContentLength(contentLength);
+                    ApkUpdateObserver.getInstance().update(event);
                     //progress > 100 ? "下载完成" : progress + "/100"
                     currentProgress = progress;
                     String text = ApkUpdateUtils.byteHandle(downloadedLength) + "/" + ApkUpdateUtils.byteHandle(contentLength);
@@ -139,15 +176,26 @@ public class ApkUpdateService extends Service {
 
                 @Override
                 public void error(String key, String filePath, Exception e) {
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.ERROR);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    event.setException(e);
+                    ApkUpdateObserver.getInstance().update(event);
                     mainHandle().post(() -> {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
                 }
             });
         } catch (MyDownloadException e) {
+            ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+            event.setType(ApkUpdateObserver.Type.ERROR);
+            event.setThreadKey(key);
+            event.setException(e);
+            ApkUpdateObserver.getInstance().update(event);
+
             switch (e.code()) {
                 case REPEAT:
-                    Toast.makeText(context, "已有此线程：" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     break;
                 case NOTHREAD:
                 case UNKNOWN:
