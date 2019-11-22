@@ -38,9 +38,9 @@ public class FileDownLoadUtils {
 
     private FileDownLoadUtils() {
         client = new OkHttpClient().newBuilder()
-                .readTimeout(30000, TimeUnit.MILLISECONDS)
-                .connectTimeout(30000, TimeUnit.MILLISECONDS)
-                .writeTimeout(30000, TimeUnit.MILLISECONDS)
+//                .readTimeout(30000, TimeUnit.MILLISECONDS)
+//                .connectTimeout(30000, TimeUnit.MILLISECONDS)
+//                .writeTimeout(30000, TimeUnit.MILLISECONDS)
                 .build();
     }
 

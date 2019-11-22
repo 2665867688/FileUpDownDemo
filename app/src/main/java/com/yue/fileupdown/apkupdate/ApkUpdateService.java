@@ -119,19 +119,9 @@ public class ApkUpdateService extends Service {
                 public void progress(String key, int progress, long downloadedLength, long contentLength, double speed) {
                     //progress > 100 ? "下载完成" : progress + "/100"
                     currentProgress = progress;
-                    contentLengthL = contentLength;
-                    String contentText = "";
-                    if (contentLength < 1024 * 1024)
-                        contentText = downloadedLength / 1024.00 + "kb/" + contentLength / 1024 + "kb";
-                    else {
-                        if (downloadedLength < 1024 * 1024)
-                            contentText = downloadedLength / 1024 + "kb/" + contentLength / (1024 * 1024) + "m";
-                        else
-                            contentText = downloadedLength / (1024 * 1024) + "m/" + contentLength / (1024 * 1024) + "m";
-                    }
-                    String finalContentText = contentText;
+                    String text = ApkUpdateUtils.byteHandle(downloadedLength) + "/" + ApkUpdateUtils.byteHandle(contentLength);
                     mainHandle().post(() -> {
-                        mNotificationHelper.notifiactionProgress(progress, finalContentText, ApkNotificationHelper.ApkNotificationType.PROGRESS);
+                        mNotificationHelper.notifiactionProgress(progress, text, ApkNotificationHelper.ApkNotificationType.PROGRESS);
                     });
                 }
 
