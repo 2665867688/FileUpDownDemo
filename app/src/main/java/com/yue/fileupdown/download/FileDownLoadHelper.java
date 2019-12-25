@@ -109,6 +109,15 @@ public class FileDownLoadHelper {
                     mHashThreadManager.remove(key);
                 downloadListener.error(key, filePath, e);
             }
+
+            @Override
+            public void responseError(String key, String filePath, Response response) {
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
+                downloadListener.responseError(key, filePath, response);
+            }
+
+
         });
         mHashThreadManager.put(key, thread);
         thread.start();
@@ -166,6 +175,15 @@ public class FileDownLoadHelper {
                     mHashThreadManager.remove(key);
                 downloadListener.error(key, filePath, e);
             }
+
+            @Override
+            public void responseError(String key, String filePath, Response response) {
+                if (mHashThreadManager.containsKey(key))
+                    mHashThreadManager.remove(key);
+                downloadListener.responseError(key, filePath, response);
+            }
+
+
         });
         mHashThreadManager.put(key, thread);
         thread.start();

@@ -1,5 +1,7 @@
 package com.yue.fileupdown.download;
 
+import okhttp3.Response;
+
 /**
  * 进度监听 断点续传
  */
@@ -45,6 +47,13 @@ public interface DownloadRangListener {
      * 异常
      */
     void error(String key, String filePath, Exception e);
+
+    /**
+     * 发生响应错误 ，请求的响应错误从这里抛出 500 200 等错误
+     *
+     * @param response
+     */
+    void responseError(String key, String filePath,Response response);
 
 
 }

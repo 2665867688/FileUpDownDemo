@@ -17,6 +17,8 @@ import com.yue.fileupdown.download.MyDownloadException;
 import java.util.Observable;
 import java.util.Observer;
 
+import okhttp3.Response;
+
 /**
  * @author shimy
  * @create 2019/11/19 14:09
@@ -94,6 +96,15 @@ public class RangDownLoadActivity extends AppCompatActivity {
                         });
 
                     }
+
+                    @Override
+                    public void responseError(String key, String filePath, Response response) {
+                        runOnUiThread(() -> {
+                            mBinding.tvShow.setText("下载异常：" + response.code());
+                        });
+                    }
+
+
                 });
             } catch (MyDownloadException e) {
                 e.printStackTrace();

@@ -15,6 +15,8 @@ import com.yue.fileupdown.download.MyDownloadException;
 
 import java.io.File;
 
+import okhttp3.Response;
+
 /**
  * @author shimy
  * @create 2019/11/19 10:56
@@ -186,6 +188,20 @@ public class ApkUpdateService extends Service {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
                 }
+
+                @Override
+                public void responseError(String key, String filePath, Response response) {
+                    ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
+                    event.setType(ApkUpdateObserver.Type.RESPONSEERROR);
+                    event.setThreadKey(key);
+                    event.setFilePath(filePath);
+                    event.setResponse(response);
+                    ApkUpdateObserver.getInstance().update(event);
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载出错" +response!=null?response.code()+"":"response==null" , ApkNotificationHelper.ApkNotificationType.ERROR);
+                    });
+                }
+
             });
         } catch (MyDownloadException e) {
             ApkUpdateObserver.ApkUpdateEvent event = new ApkUpdateObserver.ApkUpdateEvent();
@@ -253,6 +269,15 @@ public class ApkUpdateService extends Service {
                         mNotificationHelper.notifiactionProgress(currentProgress, "下载出错：" + e.getMessage(), ApkNotificationHelper.ApkNotificationType.ERROR);
                     });
                 }
+
+                @Override
+                public void responseError(String key, String filePath, Response response) {
+                    mainHandle().post(() -> {
+                        mNotificationHelper.notifiactionProgress(currentProgress, "下载出错", ApkNotificationHelper.ApkNotificationType.ERROR);
+                    });
+                }
+
+
             });
         } catch (MyDownloadException e) {
             e.printStackTrace();

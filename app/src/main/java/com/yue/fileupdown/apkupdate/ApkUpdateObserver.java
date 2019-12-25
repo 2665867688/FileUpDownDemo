@@ -2,6 +2,8 @@ package com.yue.fileupdown.apkupdate;
 
 import java.util.Observable;
 
+import okhttp3.Response;
+
 /**
  * @author shimy
  * @create 2019/11/22 13:48
@@ -16,7 +18,8 @@ public class ApkUpdateObserver extends Observable {
         FAILURE,
         SUCCESS,
         PROGRESS,
-        ERROR
+        ERROR,
+        RESPONSEERROR
     }
 
 
@@ -53,6 +56,7 @@ public class ApkUpdateObserver extends Observable {
         /*错误情况参数*/
         private Exception exception;
 
+        private Response response;//响应错误时抛出响应体 可能是null
         public Type getType() {
             return type;
         }
@@ -107,6 +111,14 @@ public class ApkUpdateObserver extends Observable {
 
         public void setException(Exception exception) {
             this.exception = exception;
+        }
+
+        public Response getResponse() {
+            return response;
+        }
+
+        public void setResponse(Response response) {
+            this.response = response;
         }
     }
 

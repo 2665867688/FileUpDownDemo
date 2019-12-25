@@ -56,7 +56,25 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
             }
 
             //文件总长度
-            final long contentLength = getContentLength(downloadUrl);
+//            final long contentLength = getContentLength(downloadUrl);
+            long contentLength = 0;
+
+            Request requestLength = new Request.Builder()
+                    .url(downloadUrl)
+                    .build();
+            Response responseLength = client.newCall(requestLength).execute();
+            if (responseLength != null && responseLength.isSuccessful()) {
+                contentLength = responseLength.body().contentLength();
+                responseLength.close();
+            }else {
+                downloadListener.responseError(key,filePath,responseLength);
+                return;
+            }
+
+            if (contentLength == 0) {
+                downloadListener.error(key, filePath, new MyDownloadException("contentLength==0", MyDownloadException.Code.UNKNOWN));
+                return;
+            }
             /*url请求拿到下载数据*/
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -65,7 +83,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
                     .url(downloadUrl)
                     .build();
             Response response = client.newCall(request).execute();
-            if (response != null) {
+            if (response != null&&response.isSuccessful()) {
                 if (fileOutputStream == null) {
                     fileOutputStream = new FileOutputStream(file);
                 }
@@ -84,6 +102,8 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
                 response.body().close();
                 downloadListener.success(key, filePath);
                 return;
+            }else {
+                downloadListener.responseError(key,filePath,response);
             }
 
         } catch (IOException e) {
@@ -101,7 +121,7 @@ public class DownLoadThread extends Thread implements IDownLoadThread {
                 e.printStackTrace();
             }
         }
-        downloadListener.failure(key, filePath);
+//        downloadListener.failure(key, filePath);
     }
 
 
